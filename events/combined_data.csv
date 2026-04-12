@@ -1,0 +1,133 @@
+,Country,Location,Track,Laps
+0,Austria,Spielberg,Red Bull Ring,71
+1,Austria,Spielberg,Red Bull Ring,71
+2,Hungary,Budapest,Hungaroring,70
+3,Great Britain,Silverstone,Silverstone Circuit,52
+4,Great Britain,Silverstone,Sliverstone Circuit,52
+5,Spain,Catalunya,Circuit de Barcelona-Catalunya,66
+6,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+7,Italy,Monza,Autodromo Nazionale Monza,53
+8,Italy,Tuscany,Mugello,59
+9,Russia,Sochi,Sochi Autodrom,53
+10,Germany,Nurburg,Nurburgring,60
+11,Portugal,Portimao,Autodromo Internacional do Algarve,66
+12,Italy,Imola,Autodromo Enzo e Dino Ferrari,63
+13,Turkey,Istanbul,Intercity Istanbul Park,58
+14,Bahrain,Sakhir,Bahrain International Circuit,57
+15,Bahrain,Sakhir,Bahrain International Circuit - Outer Track,87
+16,Abu Dhabi,Yas Island,Yas Marina Circuit,55
+17,Bahrain,Sakhir,Bahrain International Circuit,57
+18,Italy,Imola,Autodromo Enzo e Dino Ferrari,63
+19,Portugal,Portimao,Autodromo Internacional do Algarve,66
+20,Spain,Catalunya,Circuit de Barcelona-Catalunya,66
+21,Monaco,Monte Carlo,Circuit de Monaco,78
+22,Azerbaijan,Baku,Baku City Circuit,51
+23,France,Le Castellet,Circuit Paul Ricard,53
+24,Austria,Spielberg,Red Bull Ring,71
+25,Austria,Spielberg,Red Bull Ring,71
+26,Great Britain,Siverstone,Silverstone Circuit,52
+27,Hungary,Budapest,Hungaroring,70
+28,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+29,Netherlands,Zandvoort,Circuit Zandvoort,72
+30,Italy,Monza,Autodromo Nazionale Monza,53
+31,Russia,Sochi,Sochi Autodrom,53
+32,Turkey,Istanbul,Intercity Istanbul Park,58
+33,United States,Austin,Circuit of the Americas,56
+34,Mexico,Mexico City,Autodromo Hermanos Rodriguez,71
+35,Brazil,Sao Paulo,Autodromo José Carlos Pace,71
+36,Qatar,Losail,Losail International Circuit,57
+37,Saudi Arabia,Jeddah,Jeddah Corniche Circuit,50
+38,Abu Dhabi,Yas Island,Yas Marina Circuit,58
+39,Bahrain,Sakhir,Bahrain International Circuit,57
+40,Saudi Arabia,Jeddah,Jeddah Corniche Circuit,50
+41,Australia,Melbourne,Albert Park Circuit,58
+42,Italy,Imola,Autodromo Enzo e Dino Ferrari,63
+43,United States,Miami,Miami International Autodrome,57
+44,Spain,Catalunya,Circuit de Barcelona-Catalunya,66
+45,Monaco,Monte Carlo,Circuit de Monaco,78
+46,Azerbaijan,Baku,Baku City Circuit,51
+47,Canada,Montréal,Circuit Gilles-Villeneuve,70
+48,Great Britain,Silverstone,Silverstone Circuit,52
+49,Austria,Spielberg,Red Bull Ring,71
+50,France,Le Castellet,Circuit Paul Ricard,53
+51,Hungary,Budapest,Hungaroring,70
+52,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+53,Netherlands,Zandvoort,Circuit Zandvoort,72
+54,Italy,Monza,Autodromo Nazionale Monza,53
+55,Singapore,Singapore,Marina Bay Street Circuit,61
+56,Japan,Suzuka,Suzuka International Racing Course,53
+57,United States,Austin,Circuit of the Americas,56
+58,Mexico,Mexico City,Autodromo Hermanos Rodriguez,71
+59,Brazil,São Paulo,Autodromo Jose Carlos Pace,71
+60,Abu Dhabi,Yas Island,Yas Marina Circuit,58
+61,Bahrain,Sakhir,Bahrain International Circuit,57
+62,Saudi Arabia,Jeddah,Jeddah Corniche Circuit,50
+63,Australia,Melbourne,Melbourne Grand Prix Circuit,58
+64,Azerbaijan,Baku,Baku City Circuit,51
+65,United States,Miami,Miami International Autodrome,57
+66,Italy,Imola,Autodromo Enzo e Dino Ferrari,63
+67,Monaco,Monaco,Circuit de Monaco,78
+68,Spain,Catalunya,Circuit de Barcelona-Catalunya,66
+69,Canada,Montréal,Circuit Gilles-Villeneuve,70
+70,Austria,Spielberg,Red Bull Ring,71
+71,Great Britain,Silverstone,Silverstone Circuit,52
+72,Hungary,Budapest,Hungaroring,70
+73,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+74,Netherlands,Zandvoort,Circuit Zandvoort,72
+75,Italy,Monza,Autodromo Nazionale Monza,53
+76,Singapore,Singapore,Marina Bay Street Circuit,62
+77,Japan,Suzuka,Suzuka International Racing Course,53
+78,Qatar,Lusail,Lusail International Circuit,57
+79,United States,Austin,Circuit of The Americas,56
+80,Mexico,Mexico City,Autodromo Hermanos Rodriguez,71
+81,Brazil,São Paulo,Autodromo Jose Carlos Pace,71
+82,United States,Las Vegas,Las Vegas Strip Circuit,50
+83,Abu Dhabi,Yas Island,Yas Marina Circuit,58
+84,Bahrain,Sakhir,Bahrain International Circuit,57
+85,Saudi Arabia,Jeddah,Jeddah Corniche Circuit,50
+86,Australia,Melbourne,Albert Park Grand Prix Circuit,58
+87,Japan,Suzuka,Suzuka Circuit,53
+88,China,Shanghai,Shanghai International Circuit,56
+89,United States,Miami,Miami International Autodrome,57
+90,Italy,Imola,Autodromo Internazionale Enzo e Dino Ferrari,63
+91,Monaco,Monaco,Circuit de Monaco,78
+92,Canada,Montréal,Circuit Gilles-Villeneuve,70
+93,Spain,Barcelona,Circuit de Barcelona-Catalunya,66
+94,Austria,Spielberg,Red Bull Ring,71
+95,Great Britain,Silverstone,Silverstone Circuit,52
+96,Hungary,Budapest,Hungaroring,70
+97,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+98,Netherlands,Zandvoort,Circuit Zandvoort,72
+99,Italy,Monza,Autodromo Nazionale Monza,53
+100,Azerbaijan,Baku,Baku City Circuit,51
+101,Singapore,Singapore,Marina Bay Street Circuit,62
+102,United States,Austin,Circuit of the Americas,56
+103,Mexico,Mexico City,Autodromo Hermanos Rodriguez,71
+104,Brazil,São Paulo,Autodromo José Carlos Pace,71
+105,United States,Las Vegas,Las Vegas Strip Circuit,50
+106,Qatar,Qatar,Lusail International Circuit,57
+107,United Arab Emirates,Yas Island,Yas Marina Circuit,58
+108,Australia,Melbourne,Albert Park Circuit,58
+109,China,Shanghai,Shanghai International Circuit,56
+110,Japan,Suzuka,Suzuka Circuit,53
+111,Bahrain,Sakhir,Bahrain International Circuit,57
+112,Saudi Arabia,Jeddah,Jeddah Corniche Circuit,50
+113,United States,Miami,Miami International Autodrome,57
+114,Italy,Imola,Autodromo Internazionale Enzo e Dino Ferrari,63
+115,Monaco,Monaco,Circuit de Monaco,78
+116,Spain,Barcelona,Circuit de Barcelona-Catalunya,66
+117,Canada,Montréal,Circuit Gilles-Villeneuve,70
+118,Austria,Spielberg,Red Bull Ring,71
+119,Great Britain,Silverstone,Silverstone Circuit,52
+120,Belgium,Spa-Francorchamps,Circuit de Spa-Francorchamps,44
+121,Hungary,Budapest,Hungaroring,70
+122,Netherlands,Zandvoort,Circuit Zandvoort,72
+123,Italy,Monza,Autodromo Nazionale Monza,53
+124,Azerbaijan,Baku,Baku City Circuit,51
+125,Singapore,Singapore,Marina Bay Street Circuit,62
+126,United States,Austin,Circuit of The Americas,56
+127,Mexico,Mexico City,Autodromo Hermanos Rodriguez,71
+128,Brazil,São Paulo,Aurodromo Jose Carlos Pace,71
+129,United States,Las Vegas,Las Vegas Strip Circuit,50
+130,Qatar,Doha,Lusail International Circuit,57
+131,United Arab Emirates,Yas Island,Yas Marina Circuit,58
