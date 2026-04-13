@@ -1,8 +1,8 @@
-from main import FastF1Analysis
+from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
 
-# streamlit run fastf1analysis_st_dash.py
+# streamlit run app.py
 
 def get_drivers():  
     all_drivers = st.button('Analyze all drivers')
@@ -23,6 +23,7 @@ def get_tracks():
     tracks = pd.read_csv('./events/race_list.csv')['Race Name'].to_list()
     tracks = pd.Series(tracks).drop_duplicates().tolist()
     return tracks
+
 st.set_page_config(layout="wide")
 
 if 'race' not in st.session_state:
@@ -75,7 +76,7 @@ if st.session_state['race']:
             st.session_state['strategies'] = [race_pos_fig, strategies_fig]
 
     if options == 'Home':
-        st.header(f'{race.title} {race.year} {race.type}')
+        st.header(f'{race.year} {race.title} {race.type}')
         st.dataframe(race.results, hide_index=True)
         restart = st.button('Restart')
         if restart:
