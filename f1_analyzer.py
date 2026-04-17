@@ -1142,7 +1142,7 @@ class FastF1Analysis:
                 'Stint': [df['Stint'].iloc[0]],
                 'StintStart': [df['LapNumber'].iloc[0]],
                 'StintEnd': [df['LapNumber'].iloc[-1]],
-                'StintLength': [df['LapNumber'].iloc[-1] - df['LapNumber'].iloc[0]],
+                'StintLength': [df['LapNumber'].iloc[-1] - df['LapNumber'].iloc[0]] + 1,
                 'Compound': [df['Compound'].iloc[0]],
                 'FreshTyre': [df['FreshTyre'].iloc[0]],
                 'Color': self._get_compound_color(df['Compound'].iloc[0]),
