@@ -384,7 +384,10 @@ class FastF1Analysis:
 
         for team in teams_dfs:
             team_dict[team['Abbreviation'].iloc[0]] = 'solid'
-            team_dict[team['Abbreviation'].iloc[1]] = 'dot'
+            try:
+                team_dict[team['Abbreviation'].iloc[1]] = 'dot'
+            except:
+                continue
 
         return team_dict
 
