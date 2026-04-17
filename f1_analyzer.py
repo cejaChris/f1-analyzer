@@ -647,7 +647,7 @@ class FastF1Analysis:
                 template.append(text)
 
             violin_plot_fig.add_trace(go.Violin(
-                y=df['TimedLapTime'],
+                y=df[timed_lap_time],
                 name=driver_label,
                 box_visible=True,
                 meanline_visible=True,
