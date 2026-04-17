@@ -421,7 +421,7 @@ class FastF1Analysis:
         driver_laps.loc[~driver_laps['TrackStatus'].isin(['1','1.0', 1.0, 1]), 'TimedLapTime'] = pd.NA
         driver_laps.loc[driver_laps['LapNumber'].isin([1,2]), 'TimedLapTime'] = pd.NA
         driver_laps.loc[driver_laps['Deleted'] == True, 'TimedLapTime'] = pd.NA
-        driver_laps.loc[driver_laps['TimedLapTime'] - driver_laps['TimedLapTime'].mean() > 5, 'TimedLapTime'] = pd.NA
+        driver_laps.loc[driver_laps['TimedLapTime'] - driver_laps['TimedLapTime'].mean() > 10, 'TimedLapTime'] = pd.NA
             
             # if not driver_laps.loc[x, 'IsAccurate']:
             #     driver_laps.loc[x,'TimedLapTime'] = pd.NA
