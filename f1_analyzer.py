@@ -557,13 +557,14 @@ class FastF1Analysis:
         
         df = pd.concat([df_2, df]).reset_index()
         
-        fig.add_trace(go.Scatter(x=df['LapNumber'], y=df['Position'],
+        fig.add_trace(go.Scatter(
+            x=df['LapNumber'], y=df['Position'],
             name=df.loc[0, 'Driver'],
             hovertext=template,
             mode='lines+markers',
             marker=dict(color=df.loc[0, 'Color']),
             hoverinfo='text'           
-            ))
+        ))
 
         fig.update_layout(
             showlegend=True, 
@@ -572,7 +573,7 @@ class FastF1Analysis:
             template='plotly_dark', 
             margin=dict(l=5, r=5, t=30, b=40), 
             width=1200, height=680, 
-            )
+        )
         fig.update_yaxes(title_text='Position', autorange="reversed")
         fig.update_xaxes(title_text='Lap', range=[-1, self.race_distance + 1])
     
@@ -596,10 +597,8 @@ class FastF1Analysis:
         if fuel_corrected:
             line_plot_title = f'{line_plot_title} Fuel Corrected'
             violin_plot_title = f'{violin_plot_title} Fuel Corrected'
-        
-    
             
-        
+
         if line_plot_fig:
             
             template = []
@@ -625,7 +624,7 @@ class FastF1Analysis:
                 line=dict(color=df['Color'].iloc[0],
                     dash=self.driver_line_type[df['Driver'].iloc[0]]),
                 hoverinfo='text'  
-                ))       
+            ))       
 
             line_plot_fig.update_layout(
                 showlegend=True, 
@@ -634,7 +633,7 @@ class FastF1Analysis:
                 template='plotly_dark', 
                 margin=dict(l=5, r=5, t=30, b=40), 
                 width=1200, height=680, 
-                )
+            )
             line_plot_fig.update_yaxes(title_text='Time (S)')
             line_plot_fig.update_xaxes(title_text='Lap')
 
@@ -654,9 +653,7 @@ class FastF1Analysis:
                 opacity=0.6,
                 fillcolor=df.loc[0, 'Color'],
                 line_color='white',
-                points='all', # adds dots
-                pointpos=0, # centers dot
-                ))
+            ))
 
             violin_plot_fig.update_layout(
                 showlegend=True, 
@@ -666,7 +663,7 @@ class FastF1Analysis:
                 template='plotly_dark',  
                 margin=dict(l=5, r=5, t=30, b=40), 
                 width=1200, height=680, 
-                )
+            )
 
     def _get_drivers_pace(self, df_list):
 
