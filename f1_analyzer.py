@@ -1142,7 +1142,7 @@ class FastF1Analysis:
                 'Stint': [df['Stint'].iloc[0]],
                 'StintStart': [df['LapNumber'].iloc[0]],
                 'StintEnd': [df['LapNumber'].iloc[-1]],
-                'StintLength': [df['LapNumber'].iloc[-1] - df['LapNumber'].iloc[0]] + 1,
+                'StintLength': [df['LapNumber'].iloc[-1] - df['LapNumber'].iloc[0]],
                 'Compound': [df['Compound'].iloc[0]],
                 'FreshTyre': [df['FreshTyre'].iloc[0]],
                 'Color': self._get_compound_color(df['Compound'].iloc[0]),
@@ -1159,7 +1159,7 @@ class FastF1Analysis:
                 f'AVG: {self.convert_seconds_to_s_ms(df['AvgLapTime'].iloc[0])} | FC: {self.convert_seconds_to_s_ms(df['AvgLapTimeFc'].iloc[0])}<br>' # makes a new line
                 f'Tyre: {df['Compound'].iloc[0]} | New Set: {df['FreshTyre'].iloc[0]}<br>'
                 f'Stint: {df['Stint'].iloc[0].astype(int)} | '
-                f'Length: {df['StintLength'].iloc[0].astype(int)} | '
+                f'Length: {df['StintLength'].iloc[0].astype(int) + 1} | '
                 f'Range: {df['StintStart'].iloc[0].astype(int)}-{df['StintEnd'].iloc[0].astype(int)} |'
             )    
             texts.append(label)
