@@ -574,10 +574,13 @@ class FastF1Analysis:
             margin=dict(l=5, r=5, t=30, b=40), 
             width=1200, height=680, 
         )
-        fig.update_yaxes(title_text='Position', autorange="reversed")
-        fig.update_xaxes(title_text='Lap', range=[-1, self.race_distance + 1])
+        fig.update_yaxes(title_text='Position', range=[self.results['Position'].max() + .5, .5])
+        fig.update_xaxes(title_text='Lap', range=[-1, self.results['Laps'].max() + 1])
     
-    def _plot_lap_times_tool(self, df, line_plot_fig=None, violin_plot_fig=None, line_plot_title=None, violin_plot_title=None, fuel_corrected=False, driver_label=None, positions=False):
+    def _plot_lap_times_tool(
+            self, df, line_plot_fig=None, violin_plot_fig=None, line_plot_title=None, 
+            violin_plot_title=None, fuel_corrected=False, driver_label=None, positions=False
+    ):
 
         if fuel_corrected:
             lap_time = 'LapTimeFc'
@@ -621,8 +624,10 @@ class FastF1Analysis:
                 hovertext=template,
                 mode='lines+markers',
                 marker=dict(color=df.loc[0, 'Color']),
-                line=dict(color=df['Color'].iloc[0],
-                    dash=self.driver_line_type[df['Driver'].iloc[0]]),
+                line=dict(
+                    color=df['Color'].iloc[0],
+                    dash=self.driver_line_type[df['Driver'].iloc[0]]
+                ),
                 hoverinfo='text'  
             ))       
 
@@ -872,7 +877,7 @@ class FastF1Analysis:
             hovertext=text,
             textposition='none',
             hoverinfo='text'
-            ))
+        ))
         
         fig.update_layout(
             title=f'{self.year} {self.title} {self.type}',
@@ -880,7 +885,7 @@ class FastF1Analysis:
             width=1200, height=680,
             xaxis_range=xaxis_range,
             yaxis_range=yaxis_range,
-            )
+        )
         
         fig.update_yaxes(title_text=y_label, autorange=autoarange)
         fig.update_xaxes(title_text=x_label)
@@ -945,13 +950,13 @@ class FastF1Analysis:
                 hovertext=text,
                 textposition='none',
                 hoverinfo='text'
-                ))
+            ))
             fig_fc.update_layout(
                 title=f'{self.year} {self.title} {self.type} Pace Fuel Corrected',
                 template='plotly_dark',
                 width=1200, height=680,
                 xaxis_range=[df['PaceFc'].min() - .25 , df['PaceFc'].max() + .25]
-                )
+            )
             fig_fc.update_yaxes(title_text='Drivers', autorange="reversed")
             fig_fc.update_xaxes(title_text='Time (S)')
     
@@ -1100,7 +1105,7 @@ class FastF1Analysis:
 
         for fig, fc in zip([fig_lap_times, fig_lap_times_fc], ['', 'Fc']):
             fig.update_yaxes(title_text='Time (S)', range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
-            fig.update_xaxes(title_text='Lap', range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - 1, self.race_distance + 1])
+            fig.update_xaxes(title_text='Lap', range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - .5, self.results['Laps'].max() + 1])
 
         if show_figs:
             for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc]:
