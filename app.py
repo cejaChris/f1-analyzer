@@ -41,7 +41,7 @@ if st.session_state['race'] is None:
         st.session_state['session'] = None
     
     year = st.slider('Year', 2018, 2026)
-    session = st.selectbox('Session', ['FP1', 'FP2', 'FP3', 'Q', 'SQ', 'SR', 'R'])
+    session = st.selectbox('Session', ['FP1', 'FP2', 'FP3', 'Q', 'SQ', 'S', 'R'])
     track = st.selectbox('Track', get_tracks())
     done = st.button('Done')
 
@@ -67,7 +67,7 @@ if st.session_state['race']:
     elif st.session_state['session'] in ['Q', 'SQ']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry'])
-    elif st.session_state['session'] == 'R':
+    elif st.session_state['session'] in ['S', 'R']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
         if 'strategies' not in st.session_state:
