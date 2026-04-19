@@ -4,6 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import math
+import numpy as np
 
  
 
@@ -273,7 +274,7 @@ class FastF1Analysis:
 
         else:
             for x in results.index:
-                if results.loc[x, 'ClassifiedPosition'] != 'W':
+                if results.loc[x, 'Laps'] > 0:
                     drivers_names.append(results.loc[x, 'Abbreviation'])
 
 
@@ -529,6 +530,8 @@ class FastF1Analysis:
             fig.show()
 
     def _plot_race_position_tool(self, df, fig):
+
+        
 
         # tryna add the staarting grid position as lap 0
 
