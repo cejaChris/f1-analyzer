@@ -440,6 +440,7 @@ class FastF1Analysis:
         standard_dec = driver_laps['Delta'].std()
         threshold = standard_dec * 2
         driver_laps.loc[driver_laps['Delta'].abs() > threshold, 'TimedLapTime'] = pd.NA
+        driver_laps.loc[driver_laps['TimedLapTime'] == driver_laps['TimedLapTime'].max(), 'TimedLapTime'] = pd.NA
    
         driver_laps['Color'] = color_list
 
