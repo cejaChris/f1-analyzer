@@ -437,7 +437,7 @@ class FastF1Analysis:
         driver_laps['Roll'] = driver_laps['TimedLapTime'].rolling(window=5, center=True).median().ffill() #ffill fills the gaps with last valid val 
         driver_laps['Delta'] = driver_laps['TimedLapTime'] - driver_laps['Roll']
         standard_dec = driver_laps['Delta'].std()
-        threshold = standard_dec * 2.5
+        threshold = standard_dec * 2
         driver_laps.loc[driver_laps['Delta'].abs() > threshold, 'TimedLapTime'] = pd.NA
    
         driver_laps['Color'] = color_list
