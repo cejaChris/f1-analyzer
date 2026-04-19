@@ -447,6 +447,7 @@ class FastF1Analysis:
         return driver_laps
 
 
+
     def _format_practice_laps(self, initials, lap_list):
 
         df = self._convert_stint_times(initials)
@@ -509,6 +510,14 @@ class FastF1Analysis:
 
         for x in fuel_lvl_per_lap:
             time_loss_per_lap.append(x * self.time_loss)
+        
+        if self.type == 'Sprint':
+            new_time_loss = []
+            for x in time_loss_per_lap:
+                time = x * .33
+                new_time_loss.append(time)
+            return new_time_loss
+            
         
         return time_loss_per_lap
     
