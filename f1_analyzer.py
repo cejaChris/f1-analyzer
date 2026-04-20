@@ -417,12 +417,21 @@ class FastF1Analysis:
         # this is much faster than the for x in df.index:
         # ` reverses the condition from True to False and vice versa, so it selects all rows where the condition is not met`
 
-        if self.type_2 == 'Race':
+        if self.type_2 in ['Race', 'Sprint']:
             driver_laps.loc[driver_laps['LapNumber'].isin([1,2]), 'TimedLapTime'] = pd.NA
-        driver_laps.loc[~driver_laps['TrackStatus'].isin(['1','1.0', 1.0, 1]), 'TimedLapTime'] = pd.NA
-        driver_laps.loc[driver_laps['LapNumber'].isin([1,2]), 'TimedLapTime'] = pd.NA
+        driver_laps.loc[driver_laps['TrackStatus'] != '1', 'TimedLapTime'] = pd.NA
         driver_laps.loc[driver_laps['Deleted'] == True, 'TimedLapTime'] = pd.NA
-        driver_laps.loc[driver_laps['TimedLapTime'] - driver_laps['TimedLapTime'].mean() > 10, 'TimedLapTime'] = pd.NA
+        driver_laps.loc[driver_laps['IsAccurate'] == False, 'TimedLapTime'] = pd.NA
+
+        driver_laps['Roll'] = driver_laps['TimedLapTime'].rolling(window=7).median()
+        driver_laps['Roll2'] = driver_laps['TimedLapTime'].rolling(window=2).median()
+        driver_laps.loc[driver_laps['Roll'].isna(), 'Roll'] = driver_laps['Roll2']
+        driver_laps['Roll'] = driver_laps['Roll'].bfill().ffill()
+        driver_laps['Diff'] = (driver_laps['TimedLapTime'] - driver_laps['Roll']).abs()
+        threshold = driver_laps['Diff'].mean() * 2.5
+        driver_laps.loc[driver_laps['TimedLapTime'] - driver_laps['Roll'] > threshold,'TimedLapTime'] = pd.NA
+        driver_laps.loc[driver_laps['TimedLapTime'] == driver_laps['TimedLapTime'].max(), 'TimedLapTime'] = pd.NA
+
             
             # if not driver_laps.loc[x, 'IsAccurate']:
             #     driver_laps.loc[x,'TimedLapTime'] = pd.NA
@@ -435,12 +444,6 @@ class FastF1Analysis:
             # if driver_laps.loc[x,'TimedLapTime']  - driver_laps['TimedLapTime'].mean() > 2:
             #     driver_laps.loc[x,'TimedLapTime'] = pd.NA
         
-        driver_laps['Roll'] = driver_laps['TimedLapTime'].rolling(window=5, center=True).median().ffill() #ffill fills the gaps with last valid val 
-        driver_laps['Delta'] = driver_laps['TimedLapTime'] - driver_laps['Roll']
-        standard_dec = driver_laps['Delta'].std()
-        threshold = standard_dec * 2
-        driver_laps.loc[driver_laps['Delta'].abs() > threshold, 'TimedLapTime'] = pd.NA
-        driver_laps.loc[driver_laps['TimedLapTime'] == driver_laps['TimedLapTime'].max(), 'TimedLapTime'] = pd.NA
    
         driver_laps['Color'] = color_list
 
