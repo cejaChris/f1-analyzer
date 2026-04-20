@@ -518,7 +518,7 @@ class FastF1Analysis:
         if self.type == 'Sprint':
             new_time_loss = []
             for x in time_loss_per_lap:
-                time = x * .33
+                time = x * (1/3)
                 new_time_loss.append(time)
             return new_time_loss
             
