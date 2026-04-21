@@ -1355,18 +1355,44 @@ class FastF1Analysis:
             name = 'Team'
 
         
-        
-        
-        driver_initials = self._order_by_finishing_pos(drivers)
+        if not laps:
+            driver_initials = self._order_by_finishing_pos(drivers)
+        else:
+            driver_initials = drivers
         
         drivers_data = []
 
         if laps:
             if not isinstance(laps, list):
                 laps = [laps]
+            
+            driver_name = []
+            driver_lap = []
+            driver_time = []
+            
+            for driver, lap in zip(driver_initials, laps):
+                driver_lap.append(lap)
+                driver_time.append(self.session.laps.pick_drivers(driver).pick_laps(lap)['LapTime'].dt.total_seconds().item())
+                driver_name.append(driver)
+                
+                # driver_dict = self._convert_fastest_lap(driver, lap=lap)
+                # drivers_data.append(driver_dict)
+            
+            laps_df = pd.DataFrame()
+
+            laps_df['Driver'] = driver_name
+            laps_df['Lap'] = driver_lap
+            laps_df['Time'] = driver_time
+
+            laps_df = laps_df.sort_values(by='Time')
+
+            driver_initials = laps_df['Driver'].to_list()
+            laps = laps_df['Lap'].to_list()
+
             for driver, lap in zip(driver_initials, laps):
                 driver_dict = self._convert_fastest_lap(driver, lap=lap)
                 drivers_data.append(driver_dict)
+
         else:
         
             for driver in driver_initials:
