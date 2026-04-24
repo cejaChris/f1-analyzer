@@ -66,7 +66,7 @@ if st.session_state['race']:
             'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry', 'Stint Analysis'])
     elif st.session_state['session'] in ['Q', 'SQ']:
         options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry'])
+            'Home', 'Quali/Fastest Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
     elif st.session_state['session'] in ['S', 'R']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
@@ -82,6 +82,39 @@ if st.session_state['race']:
         if restart:
             st.session_state.clear()
             st.rerun()
+    if options == 'Q1 Analysis':
+        if 'q1_figs' not in st.session_state:
+            st.session_state['q1_figs'] = None
+        if st.session_state['q1_figs'] == None:
+            figs = race.plot_quali_analysis(session='Q1', return_figs=True)
+            st.session_state['q1_figs'] = figs
+        
+        if st.session_state['q1_figs'] != None:
+            for fig in st.session_state['q1_figs']:
+                st.plotly_chart(fig)
+    
+    if options == 'Q2 Analysis':
+        if 'q2_figs' not in st.session_state:
+            st.session_state['q2_figs'] = None
+        if st.session_state['q2_figs'] == None:
+            figs = race.plot_quali_analysis(session='Q2', return_figs=True)
+            st.session_state['q2_figs'] = figs
+        
+        if st.session_state['q2_figs'] != None:
+            for fig in st.session_state['q2_figs']:
+                st.plotly_chart(fig)
+    
+    if options == 'Q3 Analysis':
+        if 'q3_figs' not in st.session_state:
+            st.session_state['q3_figs'] = None
+        if st.session_state['q3_figs'] == None:
+            figs = race.plot_quali_analysis(session='Q3', return_figs=True)
+            st.session_state['q3_figs'] = figs
+        
+        if st.session_state['q3_figs'] != None:
+            for fig in st.session_state['q3_figs']:
+                st.plotly_chart(fig)
+        
     
     if options == 'Quali/Fastest Lap Analysis':
 
