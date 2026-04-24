@@ -763,14 +763,62 @@ class FastF1Analysis:
         
         return df
     
-    def plot_quali_analysis(self, top_ten=False, teams=False, show=False, return_figs=False):
+    def _quali_session_analysis(self, session):
+
+        qual_s = self.results_raw[~self.results_raw[session].isna()][['Abbreviation', session]].sort_values(by=session).reset_index(drop=True)
+        drivers = qual_s['Abbreviation'].to_list()
+
+        drivers_data = []
+
+        for driver in drivers:
+
+            df = qual_s[qual_s['Abbreviation'] == driver].reset_index(drop=True)
+            driver_lap_time = df[session].iloc[0]
+
+            driver_laps = self.session.laps.pick_drivers(driver)
+            driver_lap = driver_laps[driver_laps['LapTime'] == driver_lap_time].reset_index(drop=True)
+            lap_number = driver_lap['LapNumber'].iloc[0].item()
+            
+            telem_df = self.session.laps.pick_drivers(driver).pick_laps(lap_number).get_telemetry().add_distance()
+            data_df = self.session.laps.pick_drivers(driver).pick_laps(lap_number)[['Driver', 'LapTime','Sector1Time','Sector2Time','Sector3Time', 'SpeedST']].reset_index(drop=True)
+
+            
+            top_speed = telem_df['Speed'].max()
+            avg_speed = telem_df['Speed'].mean()
+            min_speed = telem_df['Speed'].min()
+            full_throttle_percentage = (len(telem_df[telem_df['Throttle'] == 100]) / len(telem_df.index)) * 100
+
+
+            data_df['LapTime'] = data_df['LapTime'].dt.total_seconds()
+            data_df['Sector1Time'] = data_df['Sector1Time'].dt.total_seconds()
+            data_df['Sector2Time'] = data_df['Sector2Time'].dt.total_seconds()
+            data_df['Sector3Time'] = data_df['Sector3Time'].dt.total_seconds()
+            
+            data_df.loc[0,'Color'] = plotting.get_driver_color(driver,self.session)
+            data_df.loc[0,'TopSpeed'] = top_speed
+            data_df.loc[0,'MinSpeed'] = min_speed
+            data_df.loc[0,'AvgSpeed'] = avg_speed 
+            data_df.loc[0,'FullThrottle%'] = full_throttle_percentage
+
+            drivers_data.append(data_df)
+
+            df = pd.concat(drivers_data, ignore_index=True)
+        
+        return df
+
+
+    def plot_quali_analysis(self, top_ten=False, teams=False, session=None, show=False, return_figs=False):
+
 
         if teams:
             name = 'Team'
         else:
             name = 'Driver'
- 
-        drivers_df = self._quali_analysis(top_ten=top_ten, teams=teams)
+        
+        if session:
+            drivers_df = self._quali_session_analysis(session)
+        else:
+            drivers_df = self._quali_analysis(top_ten=top_ten, teams=teams)
 
         fig_lap_time = make_subplots()
         fig_speed_trap = make_subplots()
@@ -1494,6 +1542,121 @@ class FastF1Analysis:
         if return_figs:
             return fig
 
+    def plot_qual_session_telem(self, session, return_figs=False, show_figs=False):
+
+        qual_s = self.results_raw[~self.results_raw[session].isna()][['Abbreviation', session]].sort_values(by=session).reset_index(drop=True)
+        driver_initials = qual_s['Abbreviation'].to_list()
+
+        drivers_data = []
+
+        for driver in driver_initials:
+            df = qual_s[qual_s['Abbreviation'] == driver].reset_index(drop=True)
+            driver_lap_time = df[session].iloc[0]
+
+            driver_laps = self.session.laps.pick_drivers(driver)
+            driver_lap = driver_laps[driver_laps['LapTime'] == driver_lap_time].reset_index(drop=True)
+            lap_number = driver_lap['LapNumber'].iloc[0].item()
+            
+            
+            driver_dict = self._convert_fastest_lap(driver, lap=lap_number)
+            drivers_data.append(driver_dict)
+
+        
+        fig = make_subplots(
+            rows=4, cols=1,
+            row_heights=[0.6, 0.15, 0.15, .1],
+            shared_xaxes=True
+        )
+        
+        for driver_dict in drivers_data:
+
+            details, telem = driver_dict['Details'][0], driver_dict['Details'][1]
+
+            hover_info = []
+            for d,s in zip(telem['Distance'], telem['Speed']):
+                hover_info.append(f'{details['Driver']} {round(d)}m, {round(s)}km/h')
+
+
+            fig.add_trace(go.Scatter(
+                x=telem['Distance'], y=telem['Speed'],
+                name = f'{details['Driver']} {details['LapTime']}',
+                legendgroup=f'{details['Driver']} {details['LapTime']}',
+                marker=dict(color=details['Color']),
+                line=dict(color=details['Color'],
+                    dash=self.driver_line_type[details['Driver']]),
+                showlegend=True,
+                hovertext=hover_info,
+                hoverinfo='text'),
+                row=1,col=1
+                )
+            
+            hover_info = []
+            for d,s in zip(telem['Distance'], telem['Throttle']):
+                hover_info.append(f'{details['Driver']} {round(d)}m, {round(s)}%')
+        
+            fig.add_trace(go.Scatter(
+                x=telem['Distance'], y=telem['Throttle'],
+                name = f'{details['Driver']} {details['LapTime']}',
+                legendgroup=f'{details['Driver']} {details['LapTime']}',
+                marker=dict(color=details['Color']),
+                line=dict(color=details['Color'],
+                    dash=self.driver_line_type[details['Driver']]),
+                showlegend=False,
+                hovertext=hover_info,
+                hoverinfo='text'),
+                row=2, col=1
+                )
+
+            hover_info = []
+            for d,s in zip(telem['Distance'], telem['Brake']):
+                hover_info.append(f'{details['Driver']} {round(d)}m, {round(s)}')
+            
+            fig.add_trace(go.Scatter(
+                x=telem['Distance'], y=telem['Brake'],
+                name = f'{details['Driver']} {details['LapTime']}',
+                legendgroup=f'{details['Driver']} {details['LapTime']}',
+                marker=dict(color=details['Color']),
+                line=dict(color=details['Color'],
+                    dash=self.driver_line_type[details['Driver']]),
+                showlegend=False,
+                hovertext=hover_info,
+                hoverinfo='text'),
+                row=3, col=1
+                )
+            
+            hover_info = []
+            for d,s in zip(telem['Distance'], telem['nGear']):
+                hover_info.append(f'{details['Driver']} {round(d)}m, Gear:{round(s)}')
+
+            fig.add_trace(go.Scatter(
+                x=telem['Distance'], y=telem['nGear'],
+                name = f'{details['Driver']} {details['LapTime']}',
+                legendgroup=f'{details['Driver']} {details['LapTime']}',
+                marker=dict(color=details['Color']),
+                line=dict(color=details['Color'],
+                    dash=self.driver_line_type[details['Driver']]),
+                showlegend=False,
+                hovertext=hover_info,
+                hoverinfo='text'),
+                row=4, col=1
+                )
+        
+        fig.update_layout(
+            yaxis=dict(tickformat='.0f'),
+            title= f'{self.year} {self.title} {session}',
+            template='plotly_dark', 
+            margin=dict(l=5, r=5, t=30, b=40), 
+            width=1200, height=900)
+        fig.update_yaxes(title_text='Speed km/h', row=1, col=1)
+        fig.update_yaxes(title_text='Throttle %', row=2, col=1)
+        fig.update_yaxes(title_text='Brake', row=3, col=1)
+        fig.update_yaxes(title_text='Gear', row=4, col=1)
+
+        if show_figs:
+            fig.show()
+
+        if return_figs:
+            return fig
 
 
     @staticmethod
