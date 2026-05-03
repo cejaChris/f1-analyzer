@@ -90,7 +90,11 @@ class FastF1Analysis:
 
     def _get_race_distance(self):
         if self.type == 'Race':
-            return self.session.results['Laps'].max()
+            laps = self.session.results['Laps'].max()
+            if not laps > 1:
+                laps = self.race_distance_ref[self.race_distance_ref['Race Name'] == self.title]['Laps'].iloc[0]
+            return laps
+
         elif self.title in self.race_distance_ref['Race Name'].to_list():
             return self.race_distance_ref[self.race_distance_ref['Race Name'] == self.title]['Laps'].iloc[0]
         elif self.location in self.race_distance_ref_2['Location'].to_list():
@@ -256,7 +260,7 @@ class FastF1Analysis:
                     continue
                 
         
-        elif self.type_2 == ['Practice', 'Race']:
+        elif self.type_2 in ['Practice', 'Race']:
             drivers = results['Abbreviation'].to_list()
             drivers_valid = []
             fastest_lap = []
@@ -595,8 +599,8 @@ class FastF1Analysis:
         fig.update_xaxes(title_text='Lap', range=[-1, self.results['Laps'].max() + 1])
     
     def _plot_lap_times_tool(
-            self, df, line_plot_fig=None, violin_plot_fig=None, line_plot_title=None, 
-            violin_plot_title=None, fuel_corrected=False, driver_label=None, positions=False
+        self, df, line_plot_fig=None, violin_plot_fig=None, line_plot_title=None, 
+        violin_plot_title=None, fuel_corrected=False, driver_label=None, positions=False
     ):
 
         if fuel_corrected:
