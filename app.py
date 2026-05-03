@@ -363,15 +363,15 @@ if st.session_state['race']:
         
             if st.session_state['race_type']:
                 if st.session_state['race_type'] == 'all_drivers':
-                    fig = race.plot_race_stint(all_drivers=True, return_figs=True)
+                    fig = race.plot_race_stint(all_drivers=True, gap_to_leader=True, return_figs=True)
                     st.session_state['race_figs'] = fig
 
                 elif st.session_state['race_type'] == 'top_ten':
-                    fig = race.plot_race_stint(top_ten=True, return_figs=True)
+                    fig = race.plot_race_stint(top_ten=True, gap_to_leader=True, return_figs=True)
                     st.session_state['race_figs'] = fig
 
                 elif st.session_state['race_type'] == 'teams':
-                    fig = race.plot_race_stint(teams=True, return_figs=True)
+                    fig = race.plot_race_stint(teams=True, gap_to_leader=True, return_figs=True)
                     st.session_state['race_figs'] = fig
                 elif st.session_state['race_type'] == 'spec_drivers':
 

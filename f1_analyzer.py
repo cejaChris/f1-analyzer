@@ -250,7 +250,7 @@ class FastF1Analysis:
         drivers_names = []
         results = self.session.results.reset_index(drop=True)
 
-        if self.session.session_info['Type'] in 'Qualifying':
+        if self.session.session_info['Type'] in ['Qualifying', 'Race']:
             drivers = self.session.results['Abbreviation'].to_list()
             for driver in drivers:
                 try:
@@ -260,7 +260,7 @@ class FastF1Analysis:
                     continue
                 
         
-        elif self.type_2 in ['Practice', 'Race']:
+        elif self.type_2 == 'Practice':
             drivers = results['Abbreviation'].to_list()
             drivers_valid = []
             fastest_lap = []
@@ -539,8 +539,6 @@ class FastF1Analysis:
 
         for df in dfs:
             self._plot_race_position_tool(df, fig)
-        
-       
         
         if return_figs:
             return fig
