@@ -250,22 +250,23 @@ class FastF1Analysis:
             drivers = self.session.results['Abbreviation'].to_list()
             for driver in drivers:
                 try:
-                    lap = self.session.laps.pick_drivers(driver).pick_fastest().get_telemetry()
+                    self.session.laps.pick_drivers(driver).pick_fastest().get_telemetry()
                     drivers_names.append(driver)
                 except:
                     continue
                 
         
-        elif self.type_2 == 'Practice':
+        elif self.type_2 == ['Practice', 'Race']:
             drivers = results['Abbreviation'].to_list()
             drivers_valid = []
             fastest_lap = []
             for driver in drivers:
                 try:
                     fastest_lap.append(self.session.laps.pick_drivers(driver).pick_fastest()['LapTime'].total_seconds())
+                    drivers_valid.append(driver)
                 except:
                     continue
-                drivers_valid.append(driver)
+                
 
             df = pd.DataFrame({'Drivers': drivers_valid, 'FastestLap': fastest_lap})
             df = df.sort_values(by='FastestLap')
