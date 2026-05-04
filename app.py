@@ -4,6 +4,20 @@ import streamlit as st
 
 # streamlit run app.py
 
+def fast_lap_plot(figs):
+    st.plotly_chart(figs[0], width='stretch')
+
+    a_col1, a_col2, a_col3 = st.columns(3)
+
+    a_col1.plotly_chart(figs[1], width='content')
+    a_col2.plotly_chart(figs[2], width='content')
+    a_col3.plotly_chart(figs[3], width='content')
+
+    st.plotly_chart(figs[4], width='stretch')
+
+    if race.year < 2026:
+        pass
+
 def get_drivers():  
     all_drivers = st.button('Analyze all drivers')
     top_ten = st.button('Analyze the top 10')
@@ -77,7 +91,7 @@ if st.session_state['race']:
 
     if options == 'Home':
         st.header(f'{race.year} {race.title} {race.type}')
-        st.dataframe(race.results, hide_index=True, height='stretch')
+        st.dataframe(race.results, hide_index=True, height='content')
         restart = st.button('Restart')
         if restart:
             st.session_state.clear()
@@ -90,8 +104,11 @@ if st.session_state['race']:
             st.session_state['q1_figs'] = figs
         
         if st.session_state['q1_figs'] != None:
-            for fig in st.session_state['q1_figs']:
-                st.plotly_chart(fig)
+            figs = st.session_state['q1_figs']
+
+            st.header('Q1 Analysis')
+
+            fast_lap_plot(figs)
     
     if options == 'Q2 Analysis':
         if 'q2_figs' not in st.session_state:
@@ -101,8 +118,11 @@ if st.session_state['race']:
             st.session_state['q2_figs'] = figs
         
         if st.session_state['q2_figs'] != None:
-            for fig in st.session_state['q2_figs']:
-                st.plotly_chart(fig)
+            figs = st.session_state['q2_figs']
+
+            st.header('Q2 Analysis')
+
+            fast_lap_plot(figs)
     
     if options == 'Q3 Analysis':
         if 'q3_figs' not in st.session_state:
@@ -112,8 +132,11 @@ if st.session_state['race']:
             st.session_state['q3_figs'] = figs
         
         if st.session_state['q3_figs'] != None:
-            for fig in st.session_state['q3_figs']:
-                st.plotly_chart(fig)
+            figs = st.session_state['q3_figs']
+
+            st.header('Q3 Analysis')
+
+            fast_lap_plot(figs)
         
     
     if options == 'Fast Lap Analysis':
