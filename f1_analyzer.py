@@ -651,7 +651,8 @@ class FastF1Analysis:
             ))       
 
             line_plot_fig.update_layout(
-                showlegend=True, 
+                showlegend=True,
+                legend=dict(orientation='h'),
                 yaxis=dict(tickformat='.1f'),
                 title=line_plot_title, 
                 template='plotly_dark', 
@@ -680,7 +681,7 @@ class FastF1Analysis:
             ))
 
             violin_plot_fig.update_layout(
-                showlegend=True, 
+                showlegend=False, 
                 yaxis=dict(tickformat='.2f'),
                 xaxis=dict(tickformat=','),
                 title=violin_plot_title,  
@@ -1179,7 +1180,7 @@ class FastF1Analysis:
                 fig.show()
 
         if return_figs:
-            return [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc]
+            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc]
 
 
     def plot_strategies(self, return_figs=False, show=False):

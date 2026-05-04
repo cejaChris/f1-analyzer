@@ -63,13 +63,13 @@ if st.session_state['race']:
     
     if st.session_state['session'] in ['FP1', 'FP2', 'FP3']:
         options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry', 'Stint Analysis'])
+            'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
     elif st.session_state['session'] in ['Q', 'SQ']:
         options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Quali/Fastest Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
+            'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
     elif st.session_state['session'] in ['S', 'R']:
         options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Quali/Fastest Lap Analysis', 'Quali/Fastest Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
+            'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
         if 'strategies' not in st.session_state:
             strategies_fig = race.plot_strategies(return_figs=True)
             race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
@@ -116,7 +116,7 @@ if st.session_state['race']:
                 st.plotly_chart(fig)
         
     
-    if options == 'Quali/Fastest Lap Analysis':
+    if options == 'Fast Lap Analysis':
 
         if 'quali_analysis_figs' not in st.session_state:
             st.session_state['quali_analysis_figs'] = None
@@ -146,7 +146,7 @@ if st.session_state['race']:
 
 
  
-    if options == 'Quali/Fastest Lap Telemetry':
+    if options == 'Fast Lap Telemetry':
 
 
         if 'telem_type' not in st.session_state:
