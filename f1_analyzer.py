@@ -109,7 +109,6 @@ class FastF1Analysis:
         if self.type_2 == 'Practice':
             drivers = self._get_all_drivers_names()
             driver_dict = {
-                'DriverNumber': [],
                 'Abbreviation': [],
                 'TeamName': [],
                 'Lap': []
@@ -120,7 +119,6 @@ class FastF1Analysis:
                 except:
                     break
                 driver_dict['TeamName'].append(df['Team'])
-                driver_dict['DriverNumber'].append(df['DriverNumber'])
                 driver_dict['Lap'].append(df['LapTime'].total_seconds())
                 driver_dict['Abbreviation'].append(df['Driver'])
             df = pd.DataFrame(driver_dict)
@@ -129,8 +127,8 @@ class FastF1Analysis:
             df_2 = df.copy()
             df['Lap'] = df['Lap'].apply(self.convert_seconds_to_m_s_ms)
             df['Position'] = list(range(1, len(df.index) + 1))
-            df = df[['Position', 'DriverNumber', 'Abbreviation','TeamName', 'Lap']]
-            df_2 = df_2[['Position', 'DriverNumber', 'Abbreviation','TeamName', 'Lap']]
+            df = df[['Position','Abbreviation','TeamName', 'Lap']]
+            df_2 = df_2[['Position','Abbreviation','TeamName', 'Lap']]
             df_2['Lap'] = df_2['Lap'].apply(self.convert_seconds_to_m_s_ms)
 
             for df_ in [df, df_2]:
@@ -140,7 +138,7 @@ class FastF1Analysis:
 
         elif self.type_2 in ['Qualifying', "Sprint Qualifying"]:
             df = self.session.results
-            df_2 = df[['Position', 'Abbreviation', 'TeamName', 'DriverNumber','Q1', 'Q2', 'Q3']].reset_index(drop=True)
+            df_2 = df[['Position', 'Abbreviation', 'TeamName','Q1', 'Q2', 'Q3']].reset_index(drop=True)
             for session in ['Q1', 'Q2', 'Q3']:
                 df_2[session] = df_2[session].dt.total_seconds()
                 df_2[session] = df_2[session].apply(self.convert_seconds_to_m_s_ms)
@@ -151,7 +149,7 @@ class FastF1Analysis:
             return [df, df_2]
         else:
             df = self.session.results
-            df_2 = df[['Position', 'DriverNumber', 'Abbreviation', 'TeamName','Points', 'Laps']].reset_index(drop=True)
+            df_2 = df[['Position','Abbreviation', 'TeamName','Points', 'Laps']].reset_index(drop=True)
             return [df, df_2]
         
 
@@ -612,9 +610,9 @@ class FastF1Analysis:
             driver_label = f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df[timed_lap_time].mean())}'
 
         if not line_plot_title:
-            line_plot_title = f'{self.year} {self.title} {self.type}'
+            line_plot_title = f'Lap Times'
         if not violin_plot_title:
-            violin_plot_title = f'{self.year} {self.title} {self.type}'
+            violin_plot_title = f'Pace Violin'
 
         if fuel_corrected:
             line_plot_title = f'{line_plot_title} Fuel Corrected'
@@ -651,16 +649,14 @@ class FastF1Analysis:
             ))       
 
             line_plot_fig.update_layout(
+                title=line_plot_title,
                 showlegend=True,
                 legend=dict(orientation='h'),
                 yaxis=dict(tickformat='.1f'),
-                title=line_plot_title, 
                 template='plotly_dark', 
                 margin=dict(l=5, r=5, t=30, b=40), 
                 width=1200, height=680, 
             )
-            line_plot_fig.update_yaxes(title_text='Time (S)')
-            line_plot_fig.update_xaxes(title_text='Lap')
 
         if violin_plot_fig:
 
@@ -681,10 +677,10 @@ class FastF1Analysis:
             ))
 
             violin_plot_fig.update_layout(
+                title=violin_plot_title,
                 showlegend=False, 
                 yaxis=dict(tickformat='.2f'),
                 xaxis=dict(tickformat=','),
-                title=violin_plot_title,  
                 template='plotly_dark',  
                 margin=dict(l=5, r=5, t=30, b=40), 
                 width=1200, height=680, 
@@ -928,7 +924,6 @@ class FastF1Analysis:
         orientation='h', x_label=None, 
         y_label=None, autoarange='reversed',
         xaxis_range=None, yaxis_range=None
-
     ):
         
         if not y_label:
@@ -948,15 +943,14 @@ class FastF1Analysis:
         ))
         
         fig.update_layout(
-            title=f'{self.year} {self.title} {self.type}',
+            title=x_ax,
             template='plotly_dark',
             width=1200, height=680,
             xaxis_range=xaxis_range,
             yaxis_range=yaxis_range,
         )
         
-        fig.update_yaxes(title_text=y_label, autorange=autoarange)
-        fig.update_xaxes(title_text=x_label)
+        fig.update_yaxes(autorange=autoarange)
 
     def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None):
 
@@ -986,13 +980,12 @@ class FastF1Analysis:
                 hoverinfo='text'
                 ))
             fig.update_layout(
-                title=f'{self.year} {self.title} {self.type} Pace',
+                title=f'Pace Bar',
                 template='plotly_dark',
                 width=1200, height=680,
                 xaxis_range=[df['Pace'].min() - .25 , df['Pace'].max() + .25]
                 )
-            fig.update_yaxes(title_text='Drivers', autorange="reversed")
-            fig.update_xaxes(title_text='Time (S)')
+            fig.update_yaxes(autorange="reversed")
 
         if fig_fc:
 
@@ -1020,13 +1013,12 @@ class FastF1Analysis:
                 hoverinfo='text'
             ))
             fig_fc.update_layout(
-                title=f'{self.year} {self.title} {self.type} Pace Fuel Corrected',
+                title=f'Pace Bar Fuel Corrected',
                 template='plotly_dark',
                 width=1200, height=680,
                 xaxis_range=[df['PaceFc'].min() - .25 , df['PaceFc'].max() + .25]
             )
-            fig_fc.update_yaxes(title_text='Drivers', autorange="reversed")
-            fig_fc.update_xaxes(title_text='Time (S)')
+            fig_fc.update_yaxes(autorange="reversed")
     
     def _gap_to_leader_tool(self, data, drivers):
         
@@ -1172,8 +1164,8 @@ class FastF1Analysis:
         self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc)
 
         for fig, fc in zip([fig_lap_times, fig_lap_times_fc], ['', 'Fc']):
-            fig.update_yaxes(title_text='Time (S)', range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
-            fig.update_xaxes(title_text='Lap', range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - .5, self.results['Laps'].max() + 1])
+            fig.update_yaxes(range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
+            fig.update_xaxes(range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - .5, self.results['Laps'].max() + 1])
 
         if show_figs:
             for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc]:

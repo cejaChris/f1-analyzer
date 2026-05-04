@@ -77,7 +77,7 @@ if st.session_state['race']:
 
     if options == 'Home':
         st.header(f'{race.year} {race.title} {race.type}')
-        st.dataframe(race.results, hide_index=True)
+        st.dataframe(race.results, hide_index=True, height='content')
         restart = st.button('Restart')
         if restart:
             st.session_state.clear()
@@ -130,8 +130,23 @@ if st.session_state['race']:
         
         if st.session_state['quali_analysis_figs']:
 
-            for fig in st.session_state['quali_analysis_figs']:
-                st.plotly_chart(fig)
+            figs = st.session_state['quali_analysis_figs']
+
+            st.header('Fast Lap Analysis')
+
+            st.plotly_chart(figs[0], width='stretch')
+
+            a_col1, a_col2, a_col3 = st.columns(3)
+
+            a_col1.plotly_chart(figs[1], width='content')
+            a_col2.plotly_chart(figs[2], width='content')
+            a_col3.plotly_chart(figs[3], width='content')
+
+            st.plotly_chart(figs[4], width='stretch')
+
+            if race.year < 2026:
+                pass
+
             
             restart = st.button('Restart')
 
