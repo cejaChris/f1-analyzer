@@ -77,7 +77,7 @@ if st.session_state['race']:
 
     if options == 'Home':
         st.header(f'{race.year} {race.title} {race.type}')
-        st.dataframe(race.results, hide_index=True, height='content')
+        st.dataframe(race.results, hide_index=True, height='stretch')
         restart = st.button('Restart')
         if restart:
             st.session_state.clear()
