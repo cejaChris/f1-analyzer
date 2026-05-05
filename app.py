@@ -7,20 +7,19 @@ import streamlit as st
 def fast_lap_plot(figs):
     st.plotly_chart(figs[0], width='stretch')
 
-    a_col1, a_col2, a_col3 = st.columns(3)
+    a_col1, a_col2, a_col3, a_col4 = st.columns(4)
 
     a_col1.plotly_chart(figs[1], width='content')
     a_col2.plotly_chart(figs[2], width='content')
     a_col3.plotly_chart(figs[3], width='content')
-
-    st.plotly_chart(figs[4], width='stretch')
+    a_col4.plotly_chart(figs[4], width='content')
 
     if race.year < 2026:
-        a_col4, a_col5, a_col6 = st.columns(3)
+        a_col5, a_col6, a_col7 = st.columns(3)
         
-        a_col4.plotly_chart(figs[5], width='content')
-        a_col5.plotly_chart(figs[6], width='content')
-        a_col6.plotly_chart(figs[7], width='content')
+        a_col5.plotly_chart(figs[5], width='content')
+        a_col6.plotly_chart(figs[6], width='content')
+        a_col7.plotly_chart(figs[7], width='content')
 
         st.plotly_chart(figs[8], width='content')
 
@@ -164,19 +163,7 @@ if st.session_state['race']:
 
             st.header('Fast Lap Analysis', text_alignment='center')
 
-            st.plotly_chart(figs[0], width='stretch')
-
-            a_col1, a_col2, a_col3 = st.columns(3)
-
-            a_col1.plotly_chart(figs[1], width='content')
-            a_col2.plotly_chart(figs[2], width='content')
-            a_col3.plotly_chart(figs[3], width='content')
-
-            st.plotly_chart(figs[4], width='stretch')
-
-            if race.year < 2026:
-                pass
-
+            fast_lap_plot(figs)
             
             restart = st.button('Restart')
 
@@ -441,28 +428,52 @@ if st.session_state['race']:
 
         
         if st.session_state['race_figs']:
+
             figs = st.session_state['race_figs']
+
+            fig_titles = []
+
+            for fig in figs[:6]:
+                fig_titles.append(fig.layout.title.text)
+                fig.update_layout(title='')
+            
             st.header(f'{race.year} {race.title}', text_alignment='center')
             
+            st.text(fig_titles[0], text_alignment='center')
             st.plotly_chart(figs[0], width='content')
 
             r_col1, r_col2 = st.columns(2)
 
+            r_col1.text(fig_titles[1], text_alignment='center')
+            r_col2.text(fig_titles[2], text_alignment='center')
             r_col1.plotly_chart(figs[1], width='content')
             r_col2.plotly_chart(figs[2], width='content')
 
             st.header(f'Fuel Correction', text_alignment='center')
-
+            
+            st.text(fig_titles[3], text_alignment='center')
             st.plotly_chart(figs[3], width='content')
 
             r_col3, r_col4 = st.columns(2)
+            
+            r_col3.text(fig_titles[4], text_alignment='center')
+            r_col4.text(fig_titles[5], text_alignment='center')
+            r_col3.plotly_chart(figs[4], width='content', height='content')
+            r_col4.plotly_chart(figs[5], width='content', height='content')
 
-            r_col3.plotly_chart(figs[4], width='content')
-            r_col4.plotly_chart(figs[5], width='content')
+            st.header(f'Sector Times & Speed Trap', text_alignment='center')
 
+            r_col5, r_col6, r_col7, r_col8 = st.columns(4)
+            
+            
+            r_col5.plotly_chart(figs[6], width='content', height='content')
+            r_col6.plotly_chart(figs[7], width='content', height='content')       
+            r_col7.plotly_chart(figs[8], width='content', height='content')
+            r_col8.plotly_chart(figs[9], width='content', height='content')
 
 
             restart = st.button('Restart')
+            
             if restart:
                 st.session_state['race_type'] = None
                 st.session_state['race_figs'] = None

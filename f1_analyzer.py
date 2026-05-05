@@ -692,6 +692,10 @@ class FastF1Analysis:
         color = []
         avg_pace = []
         avg_pace_fc = []
+        avg_s1 = []
+        avg_s2 = []
+        avg_s3 = []
+        avg_st = []
         color = []
 
 
@@ -699,12 +703,20 @@ class FastF1Analysis:
             drivers.append(df.loc[0, 'Driver'])
             avg_pace.append(df['TimedLapTime'].mean())
             avg_pace_fc.append(df['TimedLapTimeFc'].mean())
+            avg_s1.append(df[df['TimedLapTime'].notnull()]['Sector1Time'].dt.total_seconds().mean())
+            avg_s2.append(df[df['TimedLapTime'].notnull()]['Sector2Time'].dt.total_seconds().mean())
+            avg_s3.append(df[df['TimedLapTime'].notnull()]['Sector3Time'].dt.total_seconds().mean())
+            avg_st.append(df[df['TimedLapTime'].notnull()]['SpeedST'].mean())
             color.append(df.loc[0,'Color'])
         avg_pace_dict = {
             'Driver': drivers,
             'Color': color,
             'Pace': avg_pace,
-            'PaceFc': avg_pace_fc
+            'PaceFc': avg_pace_fc,
+            'AvgS1': avg_s1,
+            'AvgS2': avg_s2,
+            'AvgS3': avg_s3,
+            'AvgST': avg_st
         }
 
         avg_pace_df = pd.DataFrame(avg_pace_dict)
@@ -713,6 +725,16 @@ class FastF1Analysis:
         avg_pace_df['GapFcS'] = avg_pace_df['PaceFc'] - avg_pace_df['PaceFc'].min()
         avg_pace_df['Gap%'] = ((avg_pace_df['Pace'].min() - avg_pace_df['Pace']) / avg_pace_df['Pace'].min() * 100).abs().round(2)
         avg_pace_df['GapFc%'] = ((avg_pace_df['PaceFc'].min() - avg_pace_df['PaceFc']) / avg_pace_df['PaceFc'].min() * 100).abs().round(2)
+
+        avg_pace_df['GapS1'] = avg_pace_df['AvgS1'] - avg_pace_df['AvgS1'].min()
+        avg_pace_df['GapS2'] = avg_pace_df['AvgS2'] - avg_pace_df['AvgS2'].min()
+        avg_pace_df['GapS3'] = avg_pace_df['AvgS3'] - avg_pace_df['AvgS3'].min()
+        avg_pace_df['GapST'] = avg_pace_df['AvgST'] - avg_pace_df['AvgST'].max()
+
+        avg_pace_df['GapS1%'] = ((avg_pace_df['AvgS1'].min() - avg_pace_df['AvgS1']) / avg_pace_df['AvgS1'].min() * 100).abs().round(2)
+        avg_pace_df['GapS2%'] = ((avg_pace_df['AvgS2'].min() - avg_pace_df['AvgS2']) / avg_pace_df['AvgS2'].min() * 100).abs().round(2)         
+        avg_pace_df['GapS3%'] = ((avg_pace_df['AvgS3'].min() - avg_pace_df['AvgS3']) / avg_pace_df['AvgS3'].min() * 100).abs().round(2)
+        avg_pace_df['GapST%'] = ((avg_pace_df['AvgST'] - avg_pace_df['AvgST'].max()) / avg_pace_df['AvgST'].max() * 100).abs().round(2) 
 
         return avg_pace_df
     
@@ -952,7 +974,7 @@ class FastF1Analysis:
         
         fig.update_yaxes(autorange=autoarange)
 
-    def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None):
+    def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None, fig_s1=None, fig_s2=None, fig_s3=None, fig_st=None):
 
         if fig:
             
@@ -1019,6 +1041,134 @@ class FastF1Analysis:
                 xaxis_range=[df['PaceFc'].min() - .25 , df['PaceFc'].max() + .25]
             )
             fig_fc.update_yaxes(autorange="reversed")
+
+        if fig_s1:
+
+            df = df.sort_values(by='AvgS1')
+            
+            text = []
+
+            for x in df.index:
+                label = (
+                    f'{df.loc[x, 'Driver']} {self.convert_seconds_to_s_ms(df.loc[x, 'AvgS1'])}<br>'
+                    f'GAP: +{df.loc[x, 'GapS1']:.2f} | '
+                    f'+{df.loc[x, 'GapS1%']}%'
+                    )
+
+                
+                text.append(label)
+
+            fig_s1.add_trace(go.Bar(
+                x=df['AvgS1'],
+                y=df['Driver'],
+                marker_color=df['Color'],
+                orientation='h',
+                hovertext=text,
+                textposition='none',
+                hoverinfo='text'
+            ))
+            fig_s1.update_layout(
+                title=f'Pace Bar Sector 1',
+                template='plotly_dark',
+                width=1200, height=680,
+                xaxis_range=[df['AvgS1'].min() - .25 , df['AvgS1'].max() + .25]
+            )
+            fig_s1.update_yaxes(autorange="reversed")
+
+        if fig_s2:
+
+            df = df.sort_values(by='AvgS2')
+            
+            text = []
+
+            for x in df.index:
+                label = (
+                    f'{df.loc[x, 'Driver']} {self.convert_seconds_to_s_ms(df.loc[x, 'AvgS2'])}<br>'
+                    f'GAP: +{df.loc[x, 'GapS2']:.2f} | '
+                    f'+{df.loc[x, 'GapS2%']}%'
+                    )
+
+                
+                text.append(label)
+
+            fig_s2.add_trace(go.Bar(
+                x=df['AvgS2'],
+                y=df['Driver'],
+                marker_color=df['Color'],
+                orientation='h',
+                hovertext=text,
+                textposition='none',
+                hoverinfo='text'
+            ))
+            fig_s2.update_layout(
+                title=f'Pace Bar Sector 2',
+                template='plotly_dark',
+                width=1200, height=680,
+                xaxis_range=[df['AvgS2'].min() - .25 , df['AvgS2'].max() + .25]
+            )
+            fig_s2.update_yaxes(autorange="reversed")
+        
+        if fig_s3:
+            df = df.sort_values(by='AvgS3')
+            
+            text = []
+
+            for x in df.index:
+                label = (
+                    f'{df.loc[x, 'Driver']} {self.convert_seconds_to_s_ms(df.loc[x, 'AvgS3'])}<br>'
+                    f'GAP: +{df.loc[x, 'GapS3']:.2f} | '
+                    f'+{df.loc[x, 'GapS3%']}%'
+                    )
+
+                
+                text.append(label)
+
+            fig_s3.add_trace(go.Bar(
+                x=df['AvgS3'],
+                y=df['Driver'],
+                marker_color=df['Color'],
+                orientation='h',
+                hovertext=text,
+                textposition='none',
+                hoverinfo='text'
+            ))
+            fig_s3.update_layout(
+                title=f'Pace Bar Sector 3',
+                template='plotly_dark',
+                width=1200, height=680,
+                xaxis_range=[df['AvgS3'].min() - .25 , df['AvgS3'].max() + .25]
+            )
+            fig_s3.update_yaxes(autorange="reversed")
+        
+        if fig_st:
+            df = df.sort_values(by='AvgST')
+            
+            text = []
+
+            for x in df.index:
+                label = (
+                    f'{df.loc[x, 'Driver']} {df.loc[x, 'AvgST']:.2f}<br>'
+                    f'GAP: -{df.loc[x, 'GapST']:.2f} | '
+                    f'-{df.loc[x, 'GapST%']}%'
+                    )
+                text.append(label)
+
+            fig_st.add_trace(go.Bar(
+                x=df['AvgST'],
+                y=df['Driver'],
+                marker_color=df['Color'],
+                orientation='h',
+                hovertext=text,
+                textposition='none',
+                hoverinfo='text'
+            ))
+            fig_st.update_layout(
+                title=f'Pace Bar Speed Trap',
+                template='plotly_dark',
+                width=1200, height=680,
+                xaxis_range=[df['AvgST'].min() - .25 , df['AvgST'].max() + .25]
+            )
+
     
     def _gap_to_leader_tool(self, data, drivers):
         
@@ -1151,6 +1301,10 @@ class FastF1Analysis:
         fig_pace = make_subplots()
         fig_pace_fc = make_subplots()
 
+        fig_s1 = make_subplots()
+        fig_s2 = make_subplots()
+        fig_s3 = make_subplots()
+        fig_st = make_subplots()
 
         for df, df_p, lab, lab_fc, lab_p, lab_fc_p in zip(data, pace, label, label_fc, label_p, label_fc_p):
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
@@ -1161,18 +1315,18 @@ class FastF1Analysis:
             
             
         
-        self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc)
+        self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
 
         for fig, fc in zip([fig_lap_times, fig_lap_times_fc], ['', 'Fc']):
             fig.update_yaxes(range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
             fig.update_xaxes(range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - .5, self.results['Laps'].max() + 1])
 
         if show_figs:
-            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc]:
+            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]:
                 fig.show()
 
         if return_figs:
-            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc]
+            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]
 
 
     def plot_strategies(self, return_figs=False, show=False):
