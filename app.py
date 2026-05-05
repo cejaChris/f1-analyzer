@@ -16,7 +16,14 @@ def fast_lap_plot(figs):
     st.plotly_chart(figs[4], width='stretch')
 
     if race.year < 2026:
-        pass
+        a_col4, a_col5, a_col6 = st.columns(3)
+        
+        a_col4.plotly_chart(figs[5], width='content')
+        a_col5.plotly_chart(figs[6], width='content')
+        a_col6.plotly_chart(figs[7], width='content')
+
+        st.plotly_chart(figs[8], width='content')
+
 
 def get_drivers():  
     all_drivers = st.button('Analyze all drivers')
@@ -90,7 +97,7 @@ if st.session_state['race']:
             st.session_state['strategies'] = [race_pos_fig, strategies_fig]
 
     if options == 'Home':
-        st.header(f'{race.year} {race.title} {race.type}')
+        st.header(f'{race.year} {race.title} {race.type}', text_alignment='center')
         st.dataframe(race.results, hide_index=True, height='content')
         restart = st.button('Restart')
         if restart:
@@ -106,7 +113,7 @@ if st.session_state['race']:
         if st.session_state['q1_figs'] != None:
             figs = st.session_state['q1_figs']
 
-            st.header('Q1 Analysis')
+            st.header('Q1 Analysis', text_alignment='center')
 
             fast_lap_plot(figs)
     
@@ -120,7 +127,7 @@ if st.session_state['race']:
         if st.session_state['q2_figs'] != None:
             figs = st.session_state['q2_figs']
 
-            st.header('Q2 Analysis')
+            st.header('Q2 Analysis', text_alignment='center')
 
             fast_lap_plot(figs)
     
@@ -134,7 +141,7 @@ if st.session_state['race']:
         if st.session_state['q3_figs'] != None:
             figs = st.session_state['q3_figs']
 
-            st.header('Q3 Analysis')
+            st.header('Q3 Analysis', text_alignment='center')
 
             fast_lap_plot(figs)
         
@@ -155,7 +162,7 @@ if st.session_state['race']:
 
             figs = st.session_state['quali_analysis_figs']
 
-            st.header('Fast Lap Analysis')
+            st.header('Fast Lap Analysis', text_alignment='center')
 
             st.plotly_chart(figs[0], width='stretch')
 
@@ -179,7 +186,7 @@ if st.session_state['race']:
     if options == 'Race Strategies':
         
         for fig in st.session_state['strategies']:
-            st.plotly_chart(fig)
+            st.plotly_chart(fig, width='content')
         
 
 
@@ -435,8 +442,25 @@ if st.session_state['race']:
         
         if st.session_state['race_figs']:
             figs = st.session_state['race_figs']
-            for fig in figs:
-                st.plotly_chart(fig)
+            st.header(f'{race.year} {race.title}', text_alignment='center')
+            
+            st.plotly_chart(figs[0], width='content')
+
+            r_col1, r_col2 = st.columns(2)
+
+            r_col1.plotly_chart(figs[1], width='content')
+            r_col2.plotly_chart(figs[2], width='content')
+
+            st.header(f'Fuel Correction', text_alignment='center')
+
+            st.plotly_chart(figs[3], width='content')
+
+            r_col3, r_col4 = st.columns(2)
+
+            r_col3.plotly_chart(figs[4], width='content')
+            r_col4.plotly_chart(figs[5], width='content')
+
+
 
             restart = st.button('Restart')
             if restart:
