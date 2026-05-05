@@ -1,4 +1,5 @@
 import fastf1
+import fastf1.exceptions
 from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
@@ -51,6 +52,9 @@ if 'race' not in st.session_state:
 
 
 if st.session_state['race'] is None:
+    
+    if 'value_error' not in st.session_state:
+        st.session_state['value_error'] = False
     if 'year' not in st.session_state:
         st.session_state['year'] = None
     
@@ -65,23 +69,27 @@ if st.session_state['race'] is None:
     track = st.selectbox('Track', get_tracks())
     done = st.button('Done')
 
+    if st.session_state['value_error']:
+        st.error('Data for this session is not available. Please select a different session, track, or year.')
+        
     if done:
 
-        race = None
+        try:
+            race = FastF1Analysis(year, track, session)
+        
+            st.session_state['race'] = race
+            st.session_state['session'] = session
+            st.rerun()
+        
+        except fastf1.exceptions.DataNotLoadedError:
+            fastf1.Cache.clear_cache()
+            st.rerun()
+        
+        except ValueError:
+            st.session_state['value_error'] = True
+            st.rerun()
 
-        while race is None:
 
-            try:
-
-                race = FastF1Analysis(year, track, session)
-            
-                st.session_state['race'] = race
-                st.session_state['session'] = session
-                st.rerun()
-            
-            except:
-                fastf1.Cache.clear_cache()
-                st.rerun()
 
 
 

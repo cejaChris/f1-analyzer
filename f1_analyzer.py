@@ -976,6 +976,7 @@ class FastF1Analysis:
 
     def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None, fig_s1=None, fig_s2=None, fig_s3=None, fig_st=None):
 
+
         if fig:
             
             df = df.sort_values(by='Pace')
@@ -1255,7 +1256,6 @@ class FastF1Analysis:
         pace = self._order_by_avg_pace(pace_drivers)
         pace = self._format_session_laps(pace)
 
-        
 
         if gap_to_leader:
             label = self._gap_to_leader_tool(data, drivers)[0]
@@ -1315,12 +1315,22 @@ class FastF1Analysis:
         fig_s3 = make_subplots()
         fig_st = make_subplots()
 
-        for df, df_p, lab, lab_fc, lab_p, lab_fc_p in zip(data, pace, label, label_fc, label_p, label_fc_p):
+        for df, lab, lab_fc in zip(data, label, label_fc):
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
-            self._plot_lap_times_tool(df_p, violin_plot_fig=fig_lap_times_violin, driver_label=lab_p)
-
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
-            self._plot_lap_times_tool(df_p, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc_p, fuel_corrected=True)
+
+        for df, lab, lab_fc in zip(pace, label_p, label_fc_p):
+            self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_violin, driver_label=lab)
+            self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc, fuel_corrected=True)
+        
+        
+        # for df, df_p, lab, lab_fc, lab_p, lab_fc_p in zip(data, pace, label, label_fc, label_p, label_fc_p):
+        #     self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
+        #     self._plot_lap_times_tool(df_p, violin_plot_fig=fig_lap_times_violin, driver_label=lab_p)
+
+        #     self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
+        #     self._plot_lap_times_tool(df_p, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc_p, fuel_corrected=True)
+            
             
             
         
