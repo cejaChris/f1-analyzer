@@ -1,3 +1,4 @@
+import fastf1
 from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
@@ -66,11 +67,21 @@ if st.session_state['race'] is None:
 
     if done:
 
-        race = FastF1Analysis(year, track, session)
+        race = None
 
-        st.session_state['race'] = race
-        st.session_state['session'] = session
-        st.rerun()
+        while race is None:
+
+            try:
+
+                race = FastF1Analysis(year, track, session)
+            
+                st.session_state['race'] = race
+                st.session_state['session'] = session
+                st.rerun()
+            
+            except:
+                fastf1.Cache.clear_cache()
+                st.rerun()
 
 
 
