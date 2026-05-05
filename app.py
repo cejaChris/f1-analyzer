@@ -15,13 +15,12 @@ def fast_lap_plot(figs):
     a_col4.plotly_chart(figs[4], width='content')
 
     if race.year < 2026:
-        a_col5, a_col6, a_col7 = st.columns(3)
+        a_col5, a_col6, a_col7, a_col8 = st.columns(4)
         
         a_col5.plotly_chart(figs[5], width='content')
         a_col6.plotly_chart(figs[6], width='content')
         a_col7.plotly_chart(figs[7], width='content')
-
-        st.plotly_chart(figs[8], width='content')
+        a_col8.plotly_chart(figs[8], width='content')
 
 
 def get_drivers():  
