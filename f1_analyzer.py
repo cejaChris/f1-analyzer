@@ -1148,8 +1148,8 @@ class FastF1Analysis:
             for x in df.index:
                 label = (
                     f'{df.loc[x, 'Driver']} {df.loc[x, 'AvgST']:.2f}<br>'
-                    f'GAP: -{df.loc[x, 'GapST']:.2f} | '
-                    f'{df.loc[x, 'GapST%']}%'
+                    f'GAP: {df.loc[x, 'GapST']:.2f} | '
+                    f'-{df.loc[x, 'GapST%']}%'
                     )
                 text.append(label)
 
