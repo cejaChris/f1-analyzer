@@ -1243,7 +1243,16 @@ class FastF1Analysis:
         
         data = self._format_session_laps(drivers)
 
-        pace = self._order_by_avg_pace(drivers)
+        pace_drivers = []
+
+        for driver in drivers:
+            driver_laps = self.session.laps.pick_drivers(driver)
+            if driver_laps['LapNumber'].max() < self.race_distance * .75:
+                continue
+            pace_drivers.append(driver)
+
+
+        pace = self._order_by_avg_pace(pace_drivers)
         pace = self._format_session_laps(pace)
 
         
