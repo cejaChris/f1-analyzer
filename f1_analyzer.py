@@ -149,7 +149,20 @@ class FastF1Analysis:
             return [df, df_2]
         else:
             df = self.session.results
-            df_2 = df[['Position','Abbreviation', 'TeamName','Points', 'Laps']].reset_index(drop=True)
+            df_2 = self.session.results[['Position','GridPosition','Abbreviation', 'TeamName','Time','Status','Points', 'Laps']].reset_index(drop=True)
+            df_2['Time'] = df_2['Time'].dt.total_seconds()
+            total_time = self.convert_seconds_to_m_s_ms(df_2.loc[0,'Time'])
+            df_2['Time'] = df_2['Time'].apply(lambda x: self.convert_seconds_to_m_s_ms(x) if x > 60 else self.convert_seconds_to_s_ms(x))
+            df_2.loc[0,'Time'] = total_time
+            df_2['Diff'] = df_2['Position'] - df_2['GridPosition']
+            df_2['Diff'] = df_2['Diff'].abs().astype(int).astype(str)
+            df_2.loc[df_2['Position'] < df_2['GridPosition'], 'Diff'] = df_2['Diff'].apply(lambda x: f'+ {x}')
+            df_2.loc[df_2['Position'] > df_2['GridPosition'], 'Diff'] = df_2['Diff'].apply(lambda x: f'- {x}')
+            df_2.loc[df_2['Diff'] == '0', 'Diff'] = '-'
+
+
+            df_2 = df_2[['Position', 'Abbreviation', 'TeamName', 'GridPosition', 'Diff', 'Time', 'Points', 'Laps']]
+            
             return [df, df_2]
         
 
