@@ -504,46 +504,7 @@ if st.session_state['race']:
 
             figs = st.session_state['race_figs']
 
-            fig_titles = []
-
-            for fig in figs[:6]:
-                fig_titles.append(fig.layout.title.text)
-                fig.update_layout(title='')
-            
-            st.header(f'{race.year} {race.title}', text_alignment='center')
-            
-            st.text(fig_titles[0], text_alignment='center')
-            st.plotly_chart(figs[0], width='stretch', height='content')
-
-            r_col1, r_col2 = st.columns(2)
-
-            r_col1.text(fig_titles[1], text_alignment='center')
-            r_col2.text(fig_titles[2], text_alignment='center')
-            r_col1.plotly_chart(figs[1], width='stretch', height='content')
-            r_col2.plotly_chart(figs[2], width='stretch', height='content')
-
-            st.header(f'Fuel Correction', text_alignment='center')
-            
-            st.text(fig_titles[3], text_alignment='center')
-            st.plotly_chart(figs[3], width='stretch', height='content')
-
-            r_col3, r_col4 = st.columns(2)
-            
-            r_col3.text(fig_titles[4], text_alignment='center')
-            r_col4.text(fig_titles[5], text_alignment='center')
-            r_col3.plotly_chart(figs[4], width='stretch', height='content')
-            r_col4.plotly_chart(figs[5], width='stretch', height='content')
-
-            st.header(f'Sector Times & Speed Trap', text_alignment='center')
-
-            r_col5, r_col6, r_col7, r_col8 = st.columns(4)
-            
-            
-            r_col5.plotly_chart(figs[6], width='stretch', height='content')
-            r_col6.plotly_chart(figs[7], width='stretch', height='content')       
-            r_col7.plotly_chart(figs[8], width='stretch', height='content')
-            r_col8.plotly_chart(figs[9], width='stretch', height='content')
-
+            plot_stints(figs)
 
             restart = st.button('Restart')
             
@@ -604,7 +565,12 @@ if st.session_state['race']:
 
                     if done:
 
-                        figs = race.plot_by_lap_numbers_(drivers_initials=st.session_state['stint_drivers'], lap_ranges=st.session_state['stints'], return_figs=True, order_by_pace=True)
+                        figs = race.plot_by_lap_numbers_(
+                            drivers_initials=st.session_state['stint_drivers'], 
+                            lap_ranges=st.session_state['stints'], 
+                            return_figs=True, order_by_pace=True,
+                            gap_to_leader=True
+                            )
 
                         st.session_state['stint_figs'] = figs
                         

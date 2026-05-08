@@ -1644,8 +1644,8 @@ class FastF1Analysis:
 
 
         if gap_to_leader:
-            label = self._gap_to_leader_tool(data, drivers)[0]
-            label_fc = self._gap_to_leader_tool(data, drivers)[1]
+            label = self._gap_to_leader_tool(data, drivers_initials)[0]
+            label_fc = self._gap_to_leader_tool(data, drivers_initials)[1]
 
             label_p = []
             label_fc_p = []
