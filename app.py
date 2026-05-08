@@ -40,10 +40,21 @@ def get_drivers():
         figs = race.plot_quali_analysis(teams=True, return_figs=True)
         return figs
 
-def get_tracks():
-    tracks = pd.read_csv('./events/race_list.csv')['Race Name'].to_list()
-    tracks = pd.Series(tracks).drop_duplicates().tolist()
-    return tracks
+def get_tracks(year):
+    df = pd.read_csv('./events/finished.csv')
+    return df[df['Year'] == year]['EventName'].to_list()
+
+
+def get_sessions(year, track):
+    df = pd.read_csv('./events/finished.csv')
+    df = df[df['Year'] == year]
+    df = df[df['EventName'] == track].reset_index(drop=True)
+    df_list = []
+    for x in list(range(1,6)):
+        session = str(df[f'Session{x}'].item())
+        if session != 'nan':
+            df_list.append(session)
+    return df_list
 
 st.set_page_config(layout="wide")
 
@@ -65,8 +76,9 @@ if st.session_state['race'] is None:
         st.session_state['session'] = None
     
     year = st.slider('Year', 2018, 2026)
-    session = st.selectbox('Session', ['FP1', 'FP2', 'FP3', 'Q', 'SQ', 'S', 'R'])
-    track = st.selectbox('Track', get_tracks())
+    track = st.selectbox('Track', get_tracks(year))
+    session = st.selectbox('Session', get_sessions(year,track))
+    
     done = st.button('Done')
 
     if st.session_state['value_error']:
