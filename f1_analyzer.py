@@ -1703,11 +1703,11 @@ class FastF1Analysis:
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
 
-        for df, lab, lab_fc in zip(pace, label_p, label_fc_p):
+        for df, lab, lab_fc in zip(data, label, label_fc):
             self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_violin, driver_label=lab)
             self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc, fuel_corrected=True)
         
-        self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
+        self._plot_pace_graphs_tool(self._get_drivers_pace(data), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
 
         total_data = pd.concat(data)
         x_range = [(total_data['LapNumber'].min()) - .5, (total_data['LapNumber'].max()) + .5]

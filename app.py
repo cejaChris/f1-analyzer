@@ -568,8 +568,7 @@ if st.session_state['race']:
                         figs = race.plot_by_lap_numbers_(
                             drivers_initials=st.session_state['stint_drivers'], 
                             lap_ranges=st.session_state['stints'], 
-                            return_figs=True, order_by_pace=True,
-                            gap_to_leader=True
+                            return_figs=True, order_by_pace=True
                             )
 
                         st.session_state['stint_figs'] = figs
