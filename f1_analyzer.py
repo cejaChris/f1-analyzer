@@ -17,7 +17,6 @@ class FastF1Analysis:
         self.session.load() 
         self.teams = self._get_teams()
         self.location = self.session.session_info['Meeting']['Location']
-        self.races = pd.read_csv('./events/race_list.csv')['Race Name'].to_list()
         self.type_2 = self.session.session_info['Type']
         self.drivers = self._get_all_drivers_names()
         self.results = self._get_results_clean()[1]
@@ -28,8 +27,6 @@ class FastF1Analysis:
         self.type = self._get_session_type()
         self.fuel_capacity = self._get_fuel_capacity()
         self.location = self._get_location()
-        self.race_distance_ref = self._get_previous_race_distances()[1]
-        self.race_distance_ref_2 = self._get_previous_race_distances()[0]
         self.race_distance = self._get_race_distance()
         self.avg_fuel_usage = self._get_avg_fuel_usage()
         self.driver_line_type = self._driver_line_type()
@@ -46,13 +43,6 @@ class FastF1Analysis:
         session_type = x.loc[0,'Name']
 
         return session_type
-    
-    def _get_previous_race_distances(self):
-
-        df = pd.read_csv('./events/combined_data.csv')
-        df_2 = pd.read_csv('./events/race_list.csv')
-
-        return [df, df_2]
     
 
     def _get_compound_color(self, compound):
@@ -89,20 +79,12 @@ class FastF1Analysis:
         return location
 
     def _get_race_distance(self):
-        if self.type == 'Race':
-            laps = self.session.results['Laps'].max()
-            if not laps > 1:
-                laps = self.race_distance_ref[self.race_distance_ref['Race Name'] == self.title]['Laps'].iloc[0]
-            return laps
-
-        elif self.title in self.race_distance_ref['Race Name'].to_list():
-            return self.race_distance_ref[self.race_distance_ref['Race Name'] == self.title]['Laps'].iloc[0]
-        elif self.location in self.race_distance_ref_2['Location'].to_list():
-            return self.race_distance_ref_2[self.race_distance_ref_2['Location'] == self.location]['Laps'].iloc[0]
-        else:
-            return self.race_distance_ref['Laps'].mean().astype(int)
-
-        
+        df = pd.read_csv('./events/finished.csv')
+        df = df[df['Year'] == self.year]
+        df = df[df['EventName'] == self.track]
+        laps = df['Laps'].item()
+        laps = int(laps)
+        return laps
 
 
     def _get_results_clean(self):

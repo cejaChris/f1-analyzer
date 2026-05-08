@@ -41,7 +41,7 @@ def get_drivers():
         return figs
 
 def get_tracks(year):
-    df = pd.read_csv('./events/finished.csv')
+    df = pd.read_csv('./events  /finished.csv')
     return df[df['Year'] == year]['EventName'].to_list()
 
 
@@ -111,13 +111,13 @@ if st.session_state['race']:
 
     st.sidebar.title('Analytics')
     
-    if st.session_state['session'] in ['FP1', 'FP2', 'FP3']:
+    if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
-    elif st.session_state['session'] in ['Q', 'SQ']:
+    elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
-    elif st.session_state['session'] in ['S', 'R']:
+    elif st.session_state['session'] in ['Sprint', 'Race']:
         options = st.sidebar.radio('Select what you want to display:', [
             'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
         if 'strategies' not in st.session_state:
