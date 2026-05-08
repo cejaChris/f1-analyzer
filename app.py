@@ -6,6 +6,47 @@ import streamlit as st
 
 # streamlit run app.py
 
+def plot_stints(figs):
+    fig_titles = []
+
+    for fig in figs[:6]:
+        fig_titles.append(fig.layout.title.text)
+        fig.update_layout(title='')
+    
+    st.header(f'{race.year} {race.title}', text_alignment='center')
+    
+    st.text(fig_titles[0], text_alignment='center')
+    st.plotly_chart(figs[0], width='stretch', height='content')
+
+    r_col1, r_col2 = st.columns(2)
+
+    r_col1.text(fig_titles[1], text_alignment='center')
+    r_col2.text(fig_titles[2], text_alignment='center')
+    r_col1.plotly_chart(figs[1], width='stretch', height='content')
+    r_col2.plotly_chart(figs[2], width='stretch', height='content')
+
+    st.header(f'Fuel Correction', text_alignment='center')
+    
+    st.text(fig_titles[3], text_alignment='center')
+    st.plotly_chart(figs[3], width='stretch', height='content')
+
+    r_col3, r_col4 = st.columns(2)
+    
+    r_col3.text(fig_titles[4], text_alignment='center')
+    r_col4.text(fig_titles[5], text_alignment='center')
+    r_col3.plotly_chart(figs[4], width='stretch', height='content')
+    r_col4.plotly_chart(figs[5], width='stretch', height='content')
+
+    st.header(f'Sector Times & Speed Trap', text_alignment='center')
+
+    r_col5, r_col6, r_col7, r_col8 = st.columns(4)
+    
+    
+    r_col5.plotly_chart(figs[6], width='stretch', height='content')
+    r_col6.plotly_chart(figs[7], width='stretch', height='content')       
+    r_col7.plotly_chart(figs[8], width='stretch', height='content')
+    r_col8.plotly_chart(figs[9], width='stretch', height='content')
+
 def fast_lap_plot(figs):
     st.plotly_chart(figs[0], width='stretch')
 
@@ -103,9 +144,6 @@ if st.session_state['race'] is None:
 
 
 
-
-
-
 if st.session_state['race']:
     race = st.session_state['race']
 
@@ -119,7 +157,7 @@ if st.session_state['race']:
             'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
     elif st.session_state['session'] in ['Sprint', 'Race']:
         options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Race Analysis', 'Race Strategies','Stint Analysis'])
+            'Home', 'Race Strategies', 'Race Analysis','Stint Analysis', 'Fast Lap Analysis', 'Fast Lap Telemetry'])
         if 'strategies' not in st.session_state:
             strategies_fig = race.plot_strategies(return_figs=True)
             race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
@@ -566,16 +604,19 @@ if st.session_state['race']:
 
                     if done:
 
-                        figs = race.plot_by_lap_numbers(drivers_initials=st.session_state['stint_drivers'], lap_ranges=st.session_state['stints'], return_figs=True, order_by_pace=True)
+                        figs = race.plot_by_lap_numbers_(drivers_initials=st.session_state['stint_drivers'], lap_ranges=st.session_state['stints'], return_figs=True, order_by_pace=True)
 
                         st.session_state['stint_figs'] = figs
+                        
 
                         st.rerun()
 
                 
         if st.session_state['stint_figs']:
-            for fig in st.session_state['stint_figs']:
-                st.plotly_chart(fig, width='stretch', height='content')
+            
+            figs = st.session_state['stint_figs']
+
+            plot_stints(figs)
             
             restart = st.button('Restart')
 

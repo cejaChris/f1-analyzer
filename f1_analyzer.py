@@ -1552,7 +1552,180 @@ class FastF1Analysis:
         if return_figs:
             return [fig_lap_times, fig_violin_lap_times, fig_lap_times_fc, fig_violin_lap_times_fc]
         
-    
+
+    def plot_by_lap_numbers_(self, drivers_initials, lap_list=None, lap_ranges=None, lap_range=None, order_by_pace=False, gap_to_leader=False, show_figs=False, return_figs=False):
+
+        def order_dfs_by_pace(df_list):
+            dfs_dict = {}
+
+            for df in df_list:
+                name = df.loc[0,'Driver']
+                dfs_dict[name] = df
+            
+            drivers = []
+            drivers_pace = []
+
+            for df in df_list:
+                drivers.append(df.loc[0, 'Driver'])
+                drivers_pace.append(df['TimedLapTime'].mean())
+            
+            pace_df = pd.DataFrame({
+                'Driver': drivers,
+                'Pace': drivers_pace
+            })
+
+            pace_df = pace_df.sort_values(by='Pace').reset_index(drop=True)
+
+            new_df_list = []
+
+            for driver in pace_df['Driver'].to_list():
+                new_df_list.append(dfs_dict[driver])
+            
+            return new_df_list
+
+        if lap_list:
+            if not isinstance(lap_list, list):
+                lap_list = [lap_list]
+            if len(drivers_initials) != len(lap_list):
+                print('drivers_initials and stint_list does not match')
+                return
+        if lap_ranges:
+            lap_list = []
+            for laps in lap_ranges:
+                if len(laps) != 2:
+                    print('stint_ranges needs to be a list of lists of 2 integers. Starting and ending lap')
+                    return
+                else:
+                    lap_list.append(list(range(laps[0], laps[1] + 1)))
+            
+            if len(drivers_initials) != len(lap_list):
+                print('drivers_initials and stint_list does not match')
+                return
+        
+        if lap_range:
+            if len(lap_range) != 2:
+                print('stint_range needs to be a list of 2 integers. Starting and ending lap')
+                return
+            else:
+                lap_list = []
+                for driver in drivers_initials:
+                    lap_list.append(list(range(lap_range[0], lap_range[1] + 1)))
+        
+        data = []
+
+        if self.type != 'Race':
+
+            data = []
+
+            for driver, laps in zip(drivers_initials, lap_list):
+                df = self._format_practice_laps(driver, laps)
+
+                data.append(df)
+
+        
+        else:
+            
+            drivers = self._format_session_laps(drivers_initials)
+            
+            for df, laps in zip(drivers, lap_list):
+                
+                df = df[df['LapNumber'].isin(laps)].copy()
+                df = df.reset_index(drop=True)
+                
+                data.append(df)  
+        
+        if order_by_pace:
+            data = order_dfs_by_pace(data)
+        
+
+
+        pace = self._order_by_avg_pace(drivers_initials)
+        pace = self._format_session_laps(pace)
+
+
+        if gap_to_leader:
+            label = self._gap_to_leader_tool(data, drivers)[0]
+            label_fc = self._gap_to_leader_tool(data, drivers)[1]
+
+            label_p = []
+            label_fc_p = []
+            
+            driver_name = []
+            pace_ = []
+            pace_fc_ = []
+
+            for df in pace:
+                driver_name.append(df.loc[0, 'Driver'])
+                pace_.append(df['TimedLapTime'].mean())
+                pace_fc_.append(df['TimedLapTimeFc'].mean())
+                
+            pace_df_ = pd.DataFrame({
+                'Driver': driver_name,
+                'Pace': pace_,
+                'PaceFc': pace_fc_
+            })
+
+            for x in pace_df_.index:
+                label_p.append(f"{pace_df_.loc[x, 'Driver']} {FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}")
+                label_fc_p.append(f"{pace_df_.loc[x, 'Driver']} {FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}")
+        else:
+            label = []
+            label_p = []
+            label_fc = []
+            label_fc_p = []
+
+            for df, df_p in zip(data, pace):
+                label.append(f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTime'].mean())}')
+                label_p.append(f'{df_p.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTime'].mean())}')
+
+                label_fc.append(f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTimeFc'].mean())}')
+                label_fc_p.append(f'{df_p.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTimeFc'].mean())}')
+
+        # figs
+
+        all_laps_df = pd.concat(data).reset_index(drop=True)
+
+        fig_lap_times = make_subplots()
+        fig_lap_times_fc = make_subplots()
+
+        fig_lap_times_violin = make_subplots()
+        fig_lap_times_fc_violin = make_subplots()
+
+        fig_pace = make_subplots()
+        fig_pace_fc = make_subplots()
+
+        fig_s1 = make_subplots()
+        fig_s2 = make_subplots()
+        fig_s3 = make_subplots()
+        fig_st = make_subplots()
+
+        for df, lab, lab_fc in zip(data, label, label_fc):
+            self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
+            self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
+
+        for df, lab, lab_fc in zip(pace, label_p, label_fc_p):
+            self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_violin, driver_label=lab)
+            self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc, fuel_corrected=True)
+        
+        self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
+
+        total_data = pd.concat(data)
+        x_range = [(total_data['LapNumber'].min()) - .5, (total_data['LapNumber'].max()) + .5]
+
+        for fig, fc in zip([fig_lap_times, fig_lap_times_fc], ['', 'Fc']):
+            fig.update_yaxes(range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
+            fig.update_xaxes(range=x_range)
+
+        
+        if show_figs:
+            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]:
+                fig.show()
+
+        if return_figs:
+            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]
+
+
+
     def plot_lap_telem(self, drivers=None,laps=None, same_laps=None,all_drivers=False, teams=False, top_ten=False, show_figs=False, return_figs=False):
         if all_drivers or top_ten:
             drivers = self._get_all_drivers_names()
