@@ -121,6 +121,10 @@ if st.session_state['race'] is None:
     session = st.selectbox('Session', get_sessions(year,track))
     
     done = st.button('Done')
+    clear = st.button('Clear')
+
+    if clear:
+        fastf1.Cache.clear_cache()
 
     if st.session_state['value_error']:
         st.error('Data for this session is not available. Please select a different session, track, or year.')
