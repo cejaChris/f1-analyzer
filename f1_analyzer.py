@@ -425,8 +425,9 @@ class FastF1Analysis:
         driver_laps['Roll2'] = driver_laps['TimedLapTime'].rolling(window=2).median()
         driver_laps.loc[driver_laps['Roll'].isna(), 'Roll'] = driver_laps['Roll2']
         driver_laps['Roll'] = driver_laps['Roll'].bfill().ffill()
-        driver_laps['Diff'] = (driver_laps['TimedLapTime'] - driver_laps['Roll']).abs()
-        threshold = driver_laps['Diff'].mean() * 2.5
+        driver_laps['Diff'] = driver_laps['TimedLapTime'] - driver_laps['Roll']
+        driver_laps.loc[driver_laps['Diff'] < 0, 'Diff'] = pd.NA
+        threshold = driver_laps['Diff'].mean() * 2
         driver_laps.loc[driver_laps['TimedLapTime'] - driver_laps['Roll'] > threshold,'TimedLapTime'] = pd.NA
         driver_laps.loc[driver_laps['TimedLapTime'] == driver_laps['TimedLapTime'].max(), 'TimedLapTime'] = pd.NA
 

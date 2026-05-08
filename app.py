@@ -41,7 +41,7 @@ def get_drivers():
         return figs
 
 def get_tracks(year):
-    df = pd.read_csv('./events  /finished.csv')
+    df = pd.read_csv('./events/finished.csv')
     return df[df['Year'] == year]['EventName'].to_list()
 
 
