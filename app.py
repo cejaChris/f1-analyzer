@@ -132,6 +132,7 @@ if st.session_state['race'] is None:
         st.error('Data for this session is not available. Please select a different session, track, or year.')
         
     if done:
+        st.session_state['value_error'] = False
 
         try:
             race = FastF1Analysis(year, track, session)
@@ -144,9 +145,6 @@ if st.session_state['race'] is None:
             fastf1.Cache.clear_cache()
             st.rerun()
         
-        except ValueError:
-            st.session_state['value_error'] = True
-            st.rerun()
 
 
 

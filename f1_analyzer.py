@@ -85,7 +85,10 @@ class FastF1Analysis:
         for value in ['LapTime', 'Sector1Time','Sector2Time','Sector3Time']:
             df = self.session.laps.sort_values(by=value)[['Driver', value,'LapNumber', 'Compound', 'TyreLife']].head(10).reset_index(drop=True)
             for x in ['TyreLife', 'LapNumber']:
-                df[x] = df[x].apply(lambda x: int(x))
+                try:
+                    df[x] = df[x].apply(lambda x: int(x))
+                except:
+                    continue
             df['Gap'] = df[value] - df[value].iloc[0]
             for x,y in zip([value,'Gap'], [self.convert_seconds_to_m_s_ms, self.convert_seconds_to_s_ms_short]):
                 df[x] = df[x].dt.total_seconds()
