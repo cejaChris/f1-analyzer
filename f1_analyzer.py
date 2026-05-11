@@ -30,6 +30,7 @@ class FastF1Analysis:
         self.race_distance = self._get_race_distance()
         self.avg_fuel_usage = self._get_avg_fuel_usage()
         self.driver_line_type = self._driver_line_type()
+        self.top_ten_lap_details = self._get_top_ten_laps_details()
 
     
     def _get_session_title(self):
@@ -77,6 +78,29 @@ class FastF1Analysis:
         location = df.loc['Location', 'Meeting']
 
         return location
+
+
+    def _get_top_ten_laps_details(self):
+        df_list = []
+        for value in ['LapTime', 'Sector1Time','Sector2Time','Sector3Time']:
+            df = self.session.laps.sort_values(by=value)[['Driver', value,'LapNumber', 'Compound', 'TyreLife']].head(10).reset_index(drop=True)
+            for x in ['TyreLife', 'LapNumber']:
+                df[x] = df[x].apply(lambda x: int(x))
+            df['Gap'] = df[value] - df[value].iloc[0]
+            for x,y in zip([value,'Gap'], [self.convert_seconds_to_m_s_ms, self.convert_seconds_to_s_ms_short]):
+                df[x] = df[x].dt.total_seconds()
+                df[x] = df[x].apply(y)
+            df = df[['Driver', value, 'Gap', 'LapNumber','Compound', 'TyreLife']]
+            
+            df_list.append(df)
+        df = self.session.laps.sort_values(by='SpeedST', ascending=False)[['Driver', 'SpeedST','LapNumber', 'Compound', 'TyreLife']].head(10).reset_index(drop=True)
+        df['Gap'] = df['SpeedST'] - df['SpeedST'].iloc[0]
+        df['Gap'] = df['Gap'].apply(lambda x: int(x))
+        df = df[['Driver', 'SpeedST', 'Gap', 'LapNumber','Compound', 'TyreLife']]
+
+        df_list.append(df)
+        
+        return df_list
 
     def _get_race_distance(self):
         df = pd.read_csv('./events/finished.csv')

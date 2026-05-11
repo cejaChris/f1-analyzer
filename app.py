@@ -65,7 +65,6 @@ def fast_lap_plot(figs):
         a_col7.plotly_chart(figs[7], width='content')
         a_col8.plotly_chart(figs[8], width='content')
 
-
 def get_drivers():  
     all_drivers = st.button('Analyze all drivers')
     top_ten = st.button('Analyze the top 10')
@@ -85,7 +84,6 @@ def get_tracks(year):
     df = pd.read_csv('./events/finished.csv')
     return df[df['Year'] == year]['EventName'].to_list()
 
-
 def get_sessions(year, track):
     df = pd.read_csv('./events/finished.csv')
     df = df[df['Year'] == year]
@@ -97,6 +95,13 @@ def get_sessions(year, track):
             df_list.append(session)
     return df_list
 
+def df_format(df, x):
+    x.dataframe(
+            df, 
+            hide_index=True, height='content', width='stretch',
+            column_config={col: st.column_config.Column(alignment='center') for col in df.columns},
+        )
+    
 st.set_page_config(layout="wide")
 
 if 'race' not in st.session_state:
@@ -172,6 +177,25 @@ if st.session_state['race']:
             hide_index=True, height='content', width='stretch',
             column_config={col: st.column_config.Column(alignment='center') for col in df.columns},
         )
+
+        st.header(f'Top Ten Laps', text_alignment='center')
+        df_format(race.top_ten_lap_details[0],st)
+        
+        st.header(f'Sector Times & Speed Trap', text_alignment='center')
+
+        s_col1, s_col2, s_col3 = st.columns(3)
+
+        for x, y, z in zip(
+            [s_col1, s_col2, s_col3],
+            ['Sector 1', 'Sector 2', 'Sector 3'],
+            [1, 2, 3]
+        ):
+            x.header(y, text_alignment='center')
+            df_format(race.top_ten_lap_details[z], x)
+        
+        st.header(f'Speed Trap', text_alignment='center')
+        df_format(race.top_ten_lap_details[4], st)
+
         restart = st.button('Restart')
         if restart:
             st.session_state.clear()
