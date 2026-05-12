@@ -997,7 +997,7 @@ class FastF1Analysis:
         
         fig.update_yaxes(autorange=autoarange)
 
-    def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None, fig_s1=None, fig_s2=None, fig_s3=None, fig_st=None):
+    def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None, fig_s1=None, fig_s2=None, fig_s3=None, fig_st=None, fig_fl=None):
 
 
         if fig:
@@ -1192,6 +1192,35 @@ class FastF1Analysis:
                 width=1200, height=680,
                 xaxis_range=[df['AvgST'].min() - .25 , df['AvgST'].max() + .25]
             )
+        
+        if fig_fl:
+            text = []
+
+
+
+            for x in df.index:
+                label = (
+                    f'{df.loc[x, 'Driver+Lap']}<br>'
+                    f'{self.convert_seconds_to_m_s_ms(df.loc[x, 'TimedLapTime'])}'
+                    )
+                text.append(label)
+
+            fig_fl.add_trace(go.Bar(
+                x=df['TimedLapTime'],
+                y=df['Driver+Lap'],
+                marker_color=df['Color'],
+                orientation='h',
+                hovertext=text,
+                textposition='none',
+                hoverinfo='text'
+            ))
+            fig_fl.update_layout(
+                title=f'Fastest Laps',
+                template='plotly_dark',
+                width=1200, height=680,
+                xaxis_range=[df['TimedLapTime'].min() - .025 , df['TimedLapTime'].max() + .025]
+            )
+            fig_fl.update_yaxes(autorange="reversed")
 
     
     def _gap_to_leader_tool(self, data, drivers):
@@ -1266,6 +1295,7 @@ class FastF1Analysis:
             drivers = self._order_by_avg_pace(drivers)
         
         data = self._format_session_laps(drivers)
+        all_laps = pd.concat(data).reset_index(drop=True)
 
         pace_drivers = []
 
@@ -1275,10 +1305,16 @@ class FastF1Analysis:
                 continue
             pace_drivers.append(driver)
 
-
+        
         pace = self._order_by_avg_pace(pace_drivers)
         pace = self._format_session_laps(pace)
 
+
+        # get top ten laps
+        top_ten_laps = all_laps.sort_values(by='TimedLapTime').reset_index(drop=True)
+        top_ten_laps['Driver+Lap'] = top_ten_laps['Driver'].astype(str) + ' ' + top_ten_laps['LapNumber'].astype(int).astype(str)
+        if len(top_ten_laps.index.to_list()) > 10:
+            top_ten_laps = top_ten_laps.head(10)
 
         if gap_to_leader:
             label = self._gap_to_leader_tool(data, drivers)[0]
@@ -1338,6 +1374,9 @@ class FastF1Analysis:
         fig_s3 = make_subplots()
         fig_st = make_subplots()
 
+        fig_fl = make_subplots()
+
+
         for df, lab, lab_fc in zip(data, label, label_fc):
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
@@ -1358,17 +1397,18 @@ class FastF1Analysis:
             
         
         self._plot_pace_graphs_tool(self._get_drivers_pace(pace), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
+        self._plot_pace_graphs_tool(top_ten_laps, fig_fl=fig_fl)
 
         for fig, fc in zip([fig_lap_times, fig_lap_times_fc], ['', 'Fc']):
             fig.update_yaxes(range=[all_laps_df[f'LapTime{fc}'].min() - 1.5, all_laps_df[all_laps_df['TrackStatus'] == '1']['LapTime'].max() + 1])
             fig.update_xaxes(range=[all_laps_df[all_laps_df['TrackStatus'] == '1']['LapNumber'].min() - .5, self.results['Laps'].max() + 1])
 
         if show_figs:
-            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]:
+            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st, fig_fl]:
                 fig.show()
 
         if return_figs:
-            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]
+            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st, fig_fl]
 
 
     def plot_strategies(self, return_figs=False, show=False):
@@ -1712,6 +1752,13 @@ class FastF1Analysis:
 
         all_laps_df = pd.concat(data).reset_index(drop=True)
 
+        # get top ten laps
+        top_ten_laps = all_laps_df.sort_values(by='TimedLapTime').reset_index(drop=True)
+        top_ten_laps['Driver+Lap'] = top_ten_laps['Driver'].astype(str) + ' ' + top_ten_laps['LapNumber'].astype(int).astype(str)
+        if len(top_ten_laps.index.to_list()) > 10:
+            top_ten_laps = top_ten_laps.head(10)
+
+
         fig_lap_times = make_subplots()
         fig_lap_times_fc = make_subplots()
 
@@ -1726,6 +1773,8 @@ class FastF1Analysis:
         fig_s3 = make_subplots()
         fig_st = make_subplots()
 
+        fig_fl = make_subplots()
+
         for df, lab, lab_fc in zip(data, label, label_fc):
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times, driver_label=lab)
             self._plot_lap_times_tool(df, line_plot_fig=fig_lap_times_fc, driver_label=lab_fc, fuel_corrected=True)
@@ -1735,6 +1784,7 @@ class FastF1Analysis:
             self._plot_lap_times_tool(df, violin_plot_fig=fig_lap_times_fc_violin, driver_label=lab_fc, fuel_corrected=True)
         
         self._plot_pace_graphs_tool(self._get_drivers_pace(data), fig=fig_pace, fig_fc=fig_pace_fc, fig_s1=fig_s1, fig_s2=fig_s2, fig_s3=fig_s3, fig_st=fig_st)
+        self._plot_pace_graphs_tool(top_ten_laps, fig_fl=fig_fl)
 
         total_data = pd.concat(data)
         x_range = [(total_data['LapNumber'].min()) - .5, (total_data['LapNumber'].max()) + .5]
@@ -1745,11 +1795,11 @@ class FastF1Analysis:
 
         
         if show_figs:
-            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]:
+            for fig in [fig_lap_times, fig_lap_times_fc, fig_lap_times_violin, fig_lap_times_fc_violin, fig_pace, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st,fig_fl]:
                 fig.show()
 
         if return_figs:
-            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st]
+            return [fig_lap_times, fig_lap_times_violin , fig_pace, fig_lap_times_fc, fig_lap_times_fc_violin, fig_pace_fc, fig_s1, fig_s2, fig_s3, fig_st,fig_fl]
 
 
 

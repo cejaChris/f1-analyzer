@@ -47,6 +47,10 @@ def plot_stints(figs):
     r_col7.plotly_chart(figs[8], width='stretch', height='content')
     r_col8.plotly_chart(figs[9], width='stretch', height='content')
 
+    st.header('Fastest Laps', text_alignment='center')
+
+    st.plotly_chart(figs[10], width='stretch', height='content')
+
 def fast_lap_plot(figs):
     st.plotly_chart(figs[0], width='stretch')
 
