@@ -37,7 +37,7 @@ def plot_stints(figs):
     r_col3.plotly_chart(figs[4], width='stretch', height='content')
     r_col4.plotly_chart(figs[5], width='stretch', height='content')
 
-    st.header(f'Sector Times & Speed Trap', text_alignment='center')
+    st.header(f'Average Sector Times & Speed Trap', text_alignment='center')
 
     r_col5, r_col6, r_col7, r_col8 = st.columns(4)
     
@@ -46,6 +46,10 @@ def plot_stints(figs):
     r_col6.plotly_chart(figs[7], width='stretch', height='content')       
     r_col7.plotly_chart(figs[8], width='stretch', height='content')
     r_col8.plotly_chart(figs[9], width='stretch', height='content')
+
+    st.header('Fastest Laps', text_alignment='center')
+
+    st.plotly_chart(figs[10], width='stretch', height='content')
 
 def fast_lap_plot(figs):
     st.plotly_chart(figs[0], width='stretch')
