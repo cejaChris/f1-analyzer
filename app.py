@@ -37,7 +37,7 @@ def plot_stints(figs):
     r_col3.plotly_chart(figs[4], width='stretch', height='content')
     r_col4.plotly_chart(figs[5], width='stretch', height='content')
 
-    st.header(f'Sector Times & Speed Trap', text_alignment='center')
+    st.header(f'Average Sector Times & Speed Trap', text_alignment='center')
 
     r_col5, r_col6, r_col7, r_col8 = st.columns(4)
     
