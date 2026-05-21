@@ -591,7 +591,7 @@ class FastF1Analysis:
 
                 text = (
                     f"<b>Lap:</b> {int(lap)} <b>Air:</b> {air}℃ <b>Track:</b> {track}℃<br>"
-                    f"<b>Wind:</b> {wind_s} km/h {wind_c} ({wind_d})<br>"
+                    f"<b>Wind:</b> {wind_s} km/h <b>Direction</b> {wind_c} ({wind_d})<br>"
                     f"<b>Humidity:</b> {hum:.1f}% <b>Rain:</b> {rain}<br>"
                     f"<b>Pressure:</b> {press}"
                     )
