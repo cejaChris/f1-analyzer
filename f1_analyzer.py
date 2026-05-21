@@ -591,7 +591,7 @@ class FastF1Analysis:
 
                 text = (
                     f"<b>Lap:</b> {int(lap)} <b>Air:</b> {air}℃ <b>Track:</b> {track}℃<br>"
-                    f"<b>Wind:</b> {wind_s} km/h <b>Direction</b> {wind_c} ({wind_d})<br>"
+                    f"<b>Wind:</b> {wind_s} km/h <b>Direction:</b> {wind_c} ({wind_d})<br>"
                     f"<b>Humidity:</b> {hum:.1f}% <b>Rain:</b> {rain}<br>"
                     f"<b>Pressure:</b> {press}"
                     )
@@ -614,7 +614,11 @@ class FastF1Analysis:
                     margin=dict(l=5, r=5, t=30, b=40), 
                     width=1200, height=680,
                     legend=dict(
-                        orientation="h"
+                        orientation="h",
+                        yanchor="bottom",
+                        y=1.02, # Positive values push it above the plot
+                        xanchor="center",
+                        x=0.5
                     )
                 )
         else:
@@ -627,7 +631,7 @@ class FastF1Analysis:
 
                 text = (
                     f"<b>Air:</b> {air}℃ <b>Track:</b> {track}℃<br>"
-                    f"<b>Wind:</b> {wind_s} km/h {wind_c} ({wind_d})<br>"
+                    f"<b>Wind:</b> {wind_s} km/h <b>Direction:</b> {wind_c} ({wind_d})<br>"
                     f"<b>Humidity:</b> {hum:.1f}% <b>Rain:</b> {rain}<br>"
                     f"<b>Pressure:</b> {press}"
                     )
@@ -650,7 +654,11 @@ class FastF1Analysis:
                     margin=dict(l=5, r=5, t=30, b=40), 
                     width=1200, height=680,
                     legend=dict(
-                        orientation="h"
+                        orientation="h",
+                        yanchor="bottom",
+                        y=1.02, # Positive values push it above the plot
+                        xanchor="center",
+                        x=0.5
                     )
                 )
         return fig
