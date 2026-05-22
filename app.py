@@ -156,20 +156,38 @@ if st.session_state['race']:
     race = st.session_state['race']
 
     st.sidebar.title('Analytics')
+
+    if race.year != 2018:
     
-    if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
-        options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
-    elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
-        options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
-    elif st.session_state['session'] in ['Sprint', 'Race']:
-        options = st.sidebar.radio('Select what you want to display:', [
-            'Home', 'Race Strategies', 'Race Analysis','Stint Analysis', 'Fast Lap Analysis', 'Fast Lap Telemetry'])
-        if 'strategies' not in st.session_state:
-            strategies_fig = race.plot_strategies(return_figs=True)
-            race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
-            st.session_state['strategies'] = [race_pos_fig, strategies_fig]
+        if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
+        elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
+        elif st.session_state['session'] in ['Sprint', 'Race']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home', 'Race Strategies', 'Race Analysis','Stint Analysis', 'Fast Lap Analysis', 'Fast Lap Telemetry'])
+            if 'strategies' not in st.session_state:
+                strategies_fig = race.plot_strategies(return_figs=True)
+                race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
+                st.session_state['strategies'] = [race_pos_fig, strategies_fig]
+    
+    else:
+        if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home','Stint Analysis'])
+        elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home'])
+        elif st.session_state['session'] in ['Sprint', 'Race']:
+            options = st.sidebar.radio('Select what you want to display:', [
+                'Home', 'Race Strategies', 'Race Analysis','Stint Analysis'])
+            
+            if 'strategies' not in st.session_state:
+                strategies_fig = race.plot_strategies(return_figs=True)
+                race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
+                st.session_state['strategies'] = [race_pos_fig, strategies_fig]
 
     if options == 'Home':
         st.header(f'{race.year} {race.title} {race.type}', text_alignment='center')

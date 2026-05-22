@@ -267,43 +267,19 @@ class FastF1Analysis:
             return df
 
     def _get_all_drivers_names(self):
-        drivers_names = []
-        results = self.session.results.reset_index(drop=True)
+        df = self.session.results
+        driver_list = df['Abbreviation'].to_list()
+        final_list = []
 
-        if self.session.session_info['Type'] in ['Qualifying', 'Race']:
-            drivers = self.session.results['Abbreviation'].to_list()
-            for driver in drivers:
-                try:
-                    self.session.laps.pick_drivers(driver).pick_fastest().get_telemetry()
-                    drivers_names.append(driver)
-                except:
-                    continue
-                
+        for driver in driver_list:
+            try:
+                if len(self.session.laps.pick_drivers(driver).index.to_list()) > 3:
+                    final_list.append(driver)
+            except:
+                continue
         
-        elif self.type_2 == 'Practice':
-            drivers = results['Abbreviation'].to_list()
-            drivers_valid = []
-            fastest_lap = []
-            for driver in drivers:
-                try:
-                    fastest_lap.append(self.session.laps.pick_drivers(driver).pick_fastest()['LapTime'].total_seconds())
-                    drivers_valid.append(driver)
-                except:
-                    continue
-                
+        return final_list
 
-            df = pd.DataFrame({'Drivers': drivers_valid, 'FastestLap': fastest_lap})
-            df = df.sort_values(by='FastestLap')
-            drivers_names = df['Drivers'].to_list()
-
-
-        else:
-            for x in results.index:
-                if results.loc[x, 'Laps'] > 0:
-                    drivers_names.append(results.loc[x, 'Abbreviation'])
-
-
-        return drivers_names
     
     def show_drivers_laps(self, driver_initials, short=True, return_dfs=True):
         if not isinstance(driver_initials, list):
@@ -872,7 +848,7 @@ class FastF1Analysis:
         fig_sector_two = make_subplots()
         fig_sector_three = make_subplots()
 
-        if self.year == 2026:
+        if self.year in [2026, 2018]:
             figs = [fig_lap_time, fig_sector_one, fig_sector_two, fig_sector_three, fig_speed_trap]
             values = ['LapTime', 'Sector1Time', 'Sector2Time', 'Sector3Time', 'SpeedST']
         else:
