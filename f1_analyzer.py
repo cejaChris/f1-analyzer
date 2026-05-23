@@ -261,7 +261,12 @@ class FastF1Analysis:
             df_2['Time'] = df_2['Time'].apply(lambda x: self.convert_seconds_to_m_s_ms(x) if x > 60 else self.convert_seconds_to_s_ms(x))
             df_2.loc[0,'Time'] = total_time
             df_2['Diff'] = df_2['Position'] - df_2['GridPosition']
-            df_2['Diff'] = df_2['Diff'].abs().astype(int).astype(str)
+            def diff_tool(x):
+                try:
+                    return str(int(x))
+                except:
+                    return pd.NA
+            df_2['Diff'] = df_2['Diff'].abs().apply(diff_tool)
             df_2.loc[df_2['Position'] < df_2['GridPosition'], 'Diff'] = df_2['Diff'].apply(lambda x: f'+ {x}')
             df_2.loc[df_2['Position'] > df_2['GridPosition'], 'Diff'] = df_2['Diff'].apply(lambda x: f'- {x}')
             df_2.loc[df_2['Diff'] == '0', 'Diff'] = '-'
@@ -1462,7 +1467,11 @@ class FastF1Analysis:
 
         for driver in drivers:
             driver_laps = self.session.laps.pick_drivers(driver)
-            if driver_laps['LapNumber'].max() < self.race_distance * .75:
+            if self.type == 'Sprint':
+                distance = math.ceil(self.race_distance * 1/3)
+            else:
+                distance = self.race_distance
+            if driver_laps['LapNumber'].max() < distance * .75:
                 continue
             pace_drivers.append(driver)
 
