@@ -219,18 +219,18 @@ if st.session_state['race']:
 
         # WEATHER BREAKS TELEMETRY AND FAST LAP ANALYSIS
 
-        # # WEATHER
+        # WEATHER
 
-        # if 'weather_fig' not in st.session_state:
-        #     st.session_state['weather_fig'] = None
-        # if st.session_state['weather_fig'] == None:
-        #     st.session_state['weather_fig'] = race.plot_weather()
+        if 'weather_fig' not in st.session_state:
+            st.session_state['weather_fig'] = None
+        if st.session_state['weather_fig'] == None:
+            st.session_state['weather_fig'] = race.plot_weather()
         
-        # st.header('Weather', text_alignment='center')
+        st.header('Weather', text_alignment='center')
         
-        # df_format(race.weather_data[1], st)
+        df_format(race.weather_data[1], st)
 
-        # st.plotly_chart(st.session_state['weather_fig'], width='stretch', height='content')
+        st.plotly_chart(st.session_state['weather_fig'], width='stretch', height='content')
 
         restart = st.button('Restart')
         
