@@ -178,6 +178,16 @@ class FastF1Analysis:
 
 
     def _get_top_ten_laps_details(self):
+        def lap_num(lap):
+            if self.year == 2018:
+                num = 2
+            else:
+                num = 1
+            try:
+                return lap[:num]
+            except:
+                return lap
+        
         df_list = []
         for value in ['LapTime', 'Sector1Time','Sector2Time','Sector3Time']:
             df = self.session.laps.sort_values(by=value)[['Driver', value,'LapNumber', 'Compound', 'TyreLife']].head(10).reset_index(drop=True)
@@ -190,14 +200,23 @@ class FastF1Analysis:
             for x,y in zip([value,'Gap'], [self.convert_seconds_to_m_s_ms, self.convert_seconds_to_s_ms_short]):
                 df[x] = df[x].dt.total_seconds()
                 df[x] = df[x].apply(y)
-            df = df[['Driver', value, 'Gap', 'LapNumber','Compound', 'TyreLife']]
+            
+            df['Compound'] = df['Compound'].apply(lap_num)
+            df['Tyre (Laps)'] = df['Compound'].astype(str) + ' (' + df['TyreLife'].astype(str) + ')'
+            df = df[['Driver', value, 'Gap', 'LapNumber', 'Tyre (Laps)']]
             
             df_list.append(df)
         df = self.session.laps.sort_values(by='SpeedST', ascending=False)[['Driver', 'SpeedST','LapNumber', 'Compound', 'TyreLife']].head(10).reset_index(drop=True)
+
+        df['SpeedST'] = df['SpeedST'].apply(lambda x: int(x))
         df['Gap'] = df['SpeedST'] - df['SpeedST'].iloc[0]
         df['Gap'] = df['Gap'].apply(lambda x: int(x))
-        df = df[['Driver', 'SpeedST', 'Gap', 'LapNumber','Compound', 'TyreLife']]
 
+        df['Compound'] = df['Compound'].apply(lap_num)
+        df['TyreLife'] = df['TyreLife'].apply(lambda x: int(x))
+        df['Tyre (Laps)'] = df['Compound'].astype(str) + ' (' + df['TyreLife'].astype(str) + ')'
+        
+        df = df[['Driver', 'SpeedST', 'Gap', 'LapNumber','Tyre (Laps)']]    
         df_list.append(df)
         
         return df_list
