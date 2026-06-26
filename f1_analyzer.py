@@ -798,7 +798,7 @@ class FastF1Analysis:
             timed_lap_time = 'TimedLapTime'
         
         if not driver_label:
-            driver_label = f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df[timed_lap_time].mean())}'
+            driver_label = f'{df.loc[0, 'Driver']}<br>{FastF1Analysis.convert_seconds_to_m_s_ms(df[timed_lap_time].mean())}'
 
         if not line_plot_title:
             line_plot_title = f'Lap Times'
@@ -1428,6 +1428,21 @@ class FastF1Analysis:
         if order_by_pace:
             drivers = self._order_by_avg_pace(drivers)
         
+        def get_valid_stints(df):
+            stints = []
+
+            for stint in df['Stint'].unique():
+                try:
+                    fastest_lap = df[df['Stint'] == stint]['TimedLapTime'].min()
+                    if fastest_lap > 0:
+                        stints.append(df[df['Stint'] == stint]['Compound'].iloc[0][0])
+                except:
+                    continue
+            
+            stints_str ='-'.join(stints)
+
+            return stints_str
+
         data = self._format_session_laps(drivers)
         all_laps = pd.concat(data).reset_index(drop=True)
         pace_drivers = []
@@ -1462,8 +1477,10 @@ class FastF1Analysis:
             driver_name = []
             pace_ = []
             pace_fc_ = []
+            stints = []
 
             for df in pace:
+                stints.append(get_valid_stints(df))
                 driver_name.append(df.loc[0, 'Driver'])
                 pace_.append(df['TimedLapTime'].mean())
                 pace_fc_.append(df['TimedLapTimeFc'].mean())
@@ -1471,12 +1488,21 @@ class FastF1Analysis:
             pace_df_ = pd.DataFrame({
                 'Driver': driver_name,
                 'Pace': pace_,
-                'PaceFc': pace_fc_
+                'PaceFc': pace_fc_,
+                'Stints': stints
             })
 
             for x in pace_df_.index:
-                label_p.append(f"{pace_df_.loc[x, 'Driver']} {FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}")
-                label_fc_p.append(f"{pace_df_.loc[x, 'Driver']} {FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}")
+                label_p.append((
+                    f"{pace_df_.loc[x, 'Driver']}"
+                    f"<br>{pace_df_.loc[x, 'Stints']}"
+                    f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}"
+                ))
+                label_fc_p.append((
+                    f"{pace_df_.loc[x, 'Driver']}"
+                    f"<br>{pace_df_.loc[x, 'Stints']}"
+                    f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}"
+                ))
         else:
             label = []
             label_p = []
@@ -1484,11 +1510,11 @@ class FastF1Analysis:
             label_fc_p = []
 
             for df, df_p in zip(data, pace):
-                label.append(f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTime'].mean())}')
-                label_p.append(f'{df_p.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTime'].mean())}')
+                label.append(f'{df.loc[0, 'Driver']}<br>{FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTime'].mean())}')
+                label_p.append(f'{df_p.loc[0, 'Driver']}<br>{FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTime'].mean())}')
 
-                label_fc.append(f'{df.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTimeFc'].mean())}')
-                label_fc_p.append(f'{df_p.loc[0, 'Driver']} {FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTimeFc'].mean())}')
+                label_fc.append(f'{df.loc[0, 'Driver']}<br>{FastF1Analysis.convert_seconds_to_m_s_ms(df['TimedLapTimeFc'].mean())}')
+                label_fc_p.append(f'{df_p.loc[0, 'Driver']}<br>{FastF1Analysis.convert_seconds_to_m_s_ms(df_p['TimedLapTimeFc'].mean())}')
 
         # figs
 
