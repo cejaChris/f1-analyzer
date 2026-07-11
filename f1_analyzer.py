@@ -885,6 +885,22 @@ class FastF1Analysis:
         avg_s3 = []
         avg_st = []
         color = []
+        strat = []
+
+        def get_valid_stints(df):
+            stints = []
+
+            for stint in df['Stint'].unique():
+                try:
+                    fastest_lap = df[df['Stint'] == stint]['TimedLapTime'].min()
+                    if fastest_lap > 0:
+                        stints.append(df[df['Stint'] == stint]['Compound'].iloc[0][0])
+                except:
+                    continue
+            
+            stints_str ='-'.join(stints)
+
+            return stints_str
 
         for df in df_list:
             drivers.append(df.loc[0, 'Driver'])
@@ -895,6 +911,7 @@ class FastF1Analysis:
             avg_s3.append(df[df['TimedLapTime'].notnull()]['Sector3Time'].dt.total_seconds().mean())
             avg_st.append(df[df['TimedLapTime'].notnull()]['SpeedST'].mean())
             color.append(df.loc[0,'Color'])
+            strat.append(get_valid_stints(df))
 
         avg_pace_dict = {
             'Driver': drivers,
@@ -904,7 +921,8 @@ class FastF1Analysis:
             'AvgS1': avg_s1,
             'AvgS2': avg_s2,
             'AvgS3': avg_s3,
-            'AvgST': avg_st
+            'AvgST': avg_st,
+            'Strat': strat
         }
 
         avg_pace_df = pd.DataFrame(avg_pace_dict)
@@ -1141,12 +1159,13 @@ class FastF1Analysis:
 
     def _plot_pace_graphs_tool(self, df, fig=None, fig_fc=None, fig_s1=None, fig_s2=None, fig_s3=None, fig_st=None, fig_fl=None):
         if fig: 
-            df = df.sort_values(by='Pace')   
+            df = df.sort_values(by='Pace')  
             text = []
 
             for x in df.index:
                 label = (
                     f'{df.loc[x, 'Driver']} {self.convert_seconds_to_m_s_ms(df.loc[x, 'Pace'])}<br>'
+                    f'Strategy: {df.loc[x, 'Strat']}<br>'
                     f'GAP: +{df.loc[x, 'GapS']:.2f} | '
                     f'+{df.loc[x, 'Gap%']}%'
                     )
@@ -1180,6 +1199,7 @@ class FastF1Analysis:
             for x in df.index:
                 label = (
                     f'{df.loc[x, 'Driver']} {self.convert_seconds_to_m_s_ms(df.loc[x, 'PaceFc'])}<br>'
+                    f'Strategy: {df.loc[x, 'Strat']}<br>'
                     f'GAP: +{df.loc[x, 'GapFcS']:.2f} | '
                     f'+{df.loc[x, 'GapFc%']}%'
                     )
@@ -1493,16 +1513,27 @@ class FastF1Analysis:
             })
 
             for x in pace_df_.index:
-                label_p.append((
-                    f"{pace_df_.loc[x, 'Driver']}"
-                    f"<br>{pace_df_.loc[x, 'Stints']}"
-                    f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}"
-                ))
-                label_fc_p.append((
-                    f"{pace_df_.loc[x, 'Driver']}"
-                    f"<br>{pace_df_.loc[x, 'Stints']}"
-                    f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}"
-                ))
+                if True in [top_ten, teams]:
+                    label_p.append((
+                        f"{pace_df_.loc[x, 'Driver']}"
+                        f"<br>{pace_df_.loc[x, 'Stints']}"
+                        f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}"
+                    ))
+                    label_fc_p.append((
+                        f"{pace_df_.loc[x, 'Driver']}"
+                        f"<br>{pace_df_.loc[x, 'Stints']}"
+                        f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}"
+                    ))
+                else:
+                    label_p.append((
+                        f"{pace_df_.loc[x, 'Driver']}"
+                        f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'Pace'] - pace_df_.loc[0, 'Pace'])}"
+                    ))
+                    label_fc_p.append((
+                        f"{pace_df_.loc[x, 'Driver']}"
+                        f"<br>{FastF1Analysis.convert_seconds_to_s_ms_short(pace_df_.loc[x, 'PaceFc'] - pace_df_.loc[0, 'PaceFc'])}"
+                    ))
+
         else:
             label = []
             label_p = []
