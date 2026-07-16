@@ -139,8 +139,9 @@ if st.session_state['race'] is None:
         st.session_state['value_error'] = False
 
         try:
-            race = FastF1Analysis(year, track, session)
-        
+            with st.spinner('Loading data...'):
+                race = FastF1Analysis(year, track, session)
+            
             st.session_state['race'] = race
             st.session_state['session'] = session
             st.rerun()
