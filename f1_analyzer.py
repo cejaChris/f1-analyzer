@@ -234,8 +234,6 @@ class FastF1Analysis:
         figs = {}
         dfs = {}
         
-
-
     
     def _get_session_type(self):
         x = pd.DataFrame(self.session.session_info).reset_index(drop=True)
