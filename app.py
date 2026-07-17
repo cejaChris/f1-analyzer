@@ -4,6 +4,8 @@ from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
 import os
+fastf1.Cache.enable_cache('/tmp') 
+from f1_analyzer import FastF1Analysis
 
 # streamlit run app.py
 

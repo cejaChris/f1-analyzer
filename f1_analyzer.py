@@ -31,7 +31,7 @@ class FastF1Analysis:
         self.avg_fuel_usage = self._get_avg_fuel_usage()
         self.driver_line_type = self._driver_line_type()
         self.top_ten_lap_details = self._get_top_ten_laps_details()
-        self.tyre_deg = self._calc_tyre_deg()
+        # self.tyre_deg = self._calc_tyre_deg()
         # self.weather_data = self._get_weather_data()
 
     
