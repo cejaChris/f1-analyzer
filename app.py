@@ -127,7 +127,7 @@ if st.session_state['race'] is None:
     if 'session' not in st.session_state:
         st.session_state['session'] = None
     
-    year = st.slider('Year', 2018, 2026)
+    year = st.slider('Year', 2019, 2026)
     track = st.selectbox('Track', get_tracks(year))
     session = st.selectbox('Session', get_sessions(year,track))
     
