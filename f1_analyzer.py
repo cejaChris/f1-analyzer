@@ -31,6 +31,7 @@ class FastF1Analysis:
         self.avg_fuel_usage = self._get_avg_fuel_usage()
         self.driver_line_type = self._driver_line_type()
         self.top_ten_lap_details = self._get_top_ten_laps_details()
+        self.tyre_deg = self._calc_tyre_deg()
         # self.weather_data = self._get_weather_data()
 
     
@@ -135,7 +136,107 @@ class FastF1Analysis:
 
     #     return [weather, weather_summary]
 
-            
+    def _calc_tyre_deg(self):
+        if self.type_2 not in ['Race', 'Sprint']:
+            return None
+        
+        total_race_laps = self._format_session_laps(self.session.drivers)
+        total_df = pd.concat(total_race_laps).reset_index(drop=True)
+        tyres_used = total_df['Compound'].unique().tolist()
+        tyre_dfs = {}
+        
+        for tyre in tyres_used:
+            tyre_dfs[tyre] = []
+
+        for driver in self.session.drivers:
+            df = total_df.loc[total_df['Driver'] == driver].reset_index(drop=True)
+
+            for tyre in df['Compound'].unique().tolist():
+                tyre_df = df.loc[df['Compound'] == tyre].reset_index(drop=True)
+                stints = tyre_df['Stint'].unique().tolist()
+                
+                if len(stints) > 1:
+                    stint_df_list = []
+
+                    for stint in stints:
+                        stint_df = tyre_df.loc[tyre_df['Stint'] == stint].reset_index(drop=True)
+                        
+                        if len(stint_df['TimedLapTime'].to_list()) > 4:
+                            first_timed = int(stint_df[stint_df['TimedLapTime'].notnull()].index[0])
+                            last_timed = int(stint_df[stint_df['TimedLapTime'].notnull()].index[-1])
+                            df_timed = stint_df.loc[first_timed:last_timed]
+                            df_timed = df_timed.copy()
+                            
+                            df_timed['TimedLapTimeFc'] = df_timed['TimedLapTimeFc'].interpolate()
+                            df_timed['Deg'] = df_timed['TimedLapTimeFc'] - df_timed['TimedLapTimeFc'].iloc[0].item()
+                            stint_df_list.append(df_timed)
+                        else:
+                            continue
+
+                    if not stint_df_list:
+                        continue  
+                    
+                    if len(stint_df_list) > 1:
+                        stint_df_concat = pd.concat(stint_df_list).reset_index(drop=True)
+                    else:
+                        stint_df_concat = stint_df_list[0]
+
+                    stint_df_avg = pd.DataFrame({
+                        'Driver': [driver],
+                        'Compound': [tyre],
+                        'Team': [stint_df_concat['Team'].iloc[0]],
+                        'AvgDeg': [abs(stint_df_concat['Deg'].mean())],
+                        'AvgPace': [stint_df_concat['TimedLapTimeFc'].mean()],
+                        'Stints': [len(stints)],
+                        'TotalLaps': [len(stint_df_concat)],
+                        'AvgLapsPerStint': [len(stint_df_concat)/len(stints)]
+                    })
+                    tyre_dfs[tyre].append(stint_df_avg)
+                
+                else:
+                    stint_df = tyre_df.copy()
+                    if len(stint_df['TimedLapTime'].to_list()) > 4:
+                        stint_df = tyre_df.loc[tyre_df['Compound'] == tyre].reset_index(drop=True)
+
+                        first_timed = int(tyre_df[tyre_df['TimedLapTime'].notnull()].index[0])
+                        last_timed = int(tyre_df[tyre_df['TimedLapTime'].notnull()].index[-1])
+                        df_timed = tyre_df.loc[first_timed:last_timed].reset_index(drop=True)
+                        df_timed = df_timed.copy()
+                        
+                        df_timed['TimedLapTimeFc'] = df_timed['TimedLapTimeFc'].interpolate()
+                        df_timed['Deg'] = df_timed['TimedLapTimeFc'] - df_timed['TimedLapTimeFc'].iloc[0].item()
+                        
+                        stint_df_avg = pd.DataFrame({
+                            'Driver': [driver],
+                            'Compound': [tyre],
+                            'Team': [df_timed['Team'].iloc[0]],
+                            'AvgDeg': [abs(df_timed['Deg'].mean())],
+                            'AvgPace': [df_timed['TimedLapTimeFc'].mean()],
+                            'Stints': [len(stints)],
+                            'TotalLaps': [len(df_timed)],
+                            'AvgLapsPerStint': [len(df_timed)/len(stints)]
+                        })
+                        tyre_dfs[tyre].append(stint_df_avg)
+                    else:
+                        continue
+        
+        for tyre in tyres_used:
+            if len(tyre_dfs[tyre]) == 0:
+                continue
+            elif len(tyre_dfs[tyre]) == 1:
+                tyre_dfs[tyre] = tyre_dfs[tyre][0]
+            else:
+                tyre_dfs[tyre] = pd.concat(tyre_dfs[tyre]).reset_index(drop=True)
+
+        return [tyre_dfs, tyres_used] 
+
+    def plot_tyre_deg(self):
+        figs = {}
+        dfs = {}
+        
+
+
+    
     def _get_session_type(self):
         x = pd.DataFrame(self.session.session_info).reset_index(drop=True)
         session_type = x.loc[0,'Name']
