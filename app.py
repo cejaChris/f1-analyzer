@@ -4,6 +4,13 @@ from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
 import os
+
+# load fail fix
+cache_dir = './f1_cache'
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+fastf1.Cache.enable_cache(cache_dir)
+
 from f1_analyzer import FastF1Analysis
 
 # streamlit run app.py
