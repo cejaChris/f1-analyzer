@@ -3,15 +3,6 @@ import fastf1.exceptions
 from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
-import os
-
-# load fail fix
-cache_dir = './f1_cache'
-if not os.path.exists(cache_dir):
-    os.makedirs(cache_dir)
-fastf1.Cache.enable_cache(cache_dir)
-
-from f1_analyzer import FastF1Analysis
 
 # streamlit run app.py
 
@@ -46,7 +37,7 @@ def plot_stints(figs):
     r_col3.plotly_chart(figs[4], width='stretch', height='content')
     r_col4.plotly_chart(figs[5], width='stretch', height='content')
 
-    st.header(f'Average Sector Times & Speed Trap', text_alignment='center')
+    st.header(f'Sector Times & Speed Trap', text_alignment='center')
 
     r_col5, r_col6, r_col7, r_col8 = st.columns(4)
     
@@ -55,10 +46,6 @@ def plot_stints(figs):
     r_col6.plotly_chart(figs[7], width='stretch', height='content')       
     r_col7.plotly_chart(figs[8], width='stretch', height='content')
     r_col8.plotly_chart(figs[9], width='stretch', height='content')
-
-    st.header('Fastest Laps', text_alignment='center')
-
-    st.plotly_chart(figs[10], width='stretch', height='content')
 
 def fast_lap_plot(figs):
     st.plotly_chart(figs[0], width='stretch')
@@ -145,12 +132,10 @@ if st.session_state['race'] is None:
         st.error('Data for this session is not available. Please select a different session, track, or year.')
         
     if done:
-        st.session_state['value_error'] = False
 
         try:
-            with st.spinner('Loading data...'):
-                race = FastF1Analysis(year, track, session)
-            
+            race = FastF1Analysis(year, track, session)
+        
             st.session_state['race'] = race
             st.session_state['session'] = session
             st.rerun()
@@ -159,6 +144,9 @@ if st.session_state['race'] is None:
             fastf1.Cache.clear_cache()
             st.rerun()
         
+        except ValueError:
+            st.session_state['value_error'] = True
+            st.rerun()
 
 
 
@@ -166,38 +154,20 @@ if st.session_state['race']:
     race = st.session_state['race']
 
     st.sidebar.title('Analytics')
-
-    if race.year != 2018:
     
-        if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
-        elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
-        elif st.session_state['session'] in ['Sprint', 'Race']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home', 'Race Strategies', 'Race Analysis','Stint Analysis', 'Fast Lap Analysis', 'Fast Lap Telemetry'])
-            if 'strategies' not in st.session_state:
-                strategies_fig = race.plot_strategies(return_figs=True)
-                race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
-                st.session_state['strategies'] = [race_pos_fig, strategies_fig]
-    
-    else:
-        if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home','Stint Analysis'])
-        elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home'])
-        elif st.session_state['session'] in ['Sprint', 'Race']:
-            options = st.sidebar.radio('Select what you want to display:', [
-                'Home', 'Race Strategies', 'Race Analysis','Stint Analysis'])
-            
-            if 'strategies' not in st.session_state:
-                strategies_fig = race.plot_strategies(return_figs=True)
-                race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
-                st.session_state['strategies'] = [race_pos_fig, strategies_fig]
+    if st.session_state['session'] in ['Practice 1', 'Practice 2', 'Practice 3']:
+        options = st.sidebar.radio('Select what you want to display:', [
+            'Home', 'Fast Lap Analysis', 'Fast Lap Telemetry', 'Stint Analysis'])
+    elif st.session_state['session'] in ['Qualifying', 'Sprint Qualifying']:
+        options = st.sidebar.radio('Select what you want to display:', [
+            'Home', 'Fast Lap Telemetry','Q1 Analysis', 'Q2 Analysis', 'Q3 Analysis'])
+    elif st.session_state['session'] in ['Sprint', 'Race']:
+        options = st.sidebar.radio('Select what you want to display:', [
+            'Home', 'Race Strategies', 'Race Analysis','Stint Analysis', 'Fast Lap Analysis', 'Fast Lap Telemetry'])
+        if 'strategies' not in st.session_state:
+            strategies_fig = race.plot_strategies(return_figs=True)
+            race_pos_fig = race.plot_all_drivers_positions(return_figs=True)
+            st.session_state['strategies'] = [race_pos_fig, strategies_fig]
 
     if options == 'Home':
         st.header(f'{race.year} {race.title} {race.type}', text_alignment='center')
@@ -226,24 +196,7 @@ if st.session_state['race']:
         st.header(f'Speed Trap', text_alignment='center')
         df_format(race.top_ten_lap_details[4], st)
 
-
-        # WEATHER BREAKS TELEMETRY AND FAST LAP ANALYSIS
-
-        # # WEATHER
-
-        # if 'weather_fig' not in st.session_state:
-        #     st.session_state['weather_fig'] = None
-        # if st.session_state['weather_fig'] == None:
-        #     st.session_state['weather_fig'] = race.plot_weather()
-        
-        # st.header('Weather', text_alignment='center')
-        
-        # df_format(race.weather_data[1], st)
-
-        # st.plotly_chart(st.session_state['weather_fig'], width='stretch', height='content')
-
         restart = st.button('Restart')
-        
         if restart:
             st.session_state.clear()
             st.rerun()
