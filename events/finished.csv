@@ -1,5 +1,5 @@
 ,RoundNumber,Country,Location,EventName,Session1,Session2,Session3,Session4,Session5,Year,ID,Laps
-0,1,Australia,Melbourne,Australian Grand Prix,Practice 1,Practice 2,Practice 3,Qualifying,Race,2018,989,58
+,1,Australia,Melbourne,Australian Grand Prix,Practice 1,Practice 2,Practice 3,Qualifying,Race,2018,989,58
 1,2,Bahrain,Sakhir,Bahrain Grand Prix,Practice 1,Practice 2,Practice 3,Qualifying,Race,2018,990,57
 2,3,China,Shanghai,Chinese Grand Prix,Practice 1,Practice 2,Practice 3,Qualifying,Race,2018,991,56
 3,4,Azerbaijan,Baku,Azerbaijan Grand Prix,Practice 1,Practice 2,Practice 3,Qualifying,Race,2018,992,51
