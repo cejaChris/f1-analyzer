@@ -3,8 +3,18 @@ import fastf1.exceptions
 from f1_analyzer import FastF1Analysis
 import pandas as pd
 import streamlit as st
+import os
 
 # streamlit run app.py
+
+# change cache location to a custom directory within the current working directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+custom_cache_dir = os.path.join(current_dir, 'fastf1_cache')
+
+if not os.path.exists(custom_cache_dir):
+    os.makedirs(custom_cache_dir)
+
+fastf1.Cache.enable_cache(custom_cache_dir)
 
 def plot_stints(figs):
     fig_titles = []
